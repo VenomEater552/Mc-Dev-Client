@@ -19,6 +19,11 @@ public class ResourceLocation
         this(0, splitObjectName(resourceName));
     }
 
+    public ResourceLocation(String resourceDomainIn, String resourcePathIn)
+    {
+        this(0, new String[] {resourceDomainIn, resourcePathIn});
+    }
+
     /**
      * Splits an object name (such as minecraft:apple) into the domain and path parts and returns these as an array of
      * length 2. If no colon is present in the passed value the returned array will contain {null, toSplit}.
@@ -44,6 +49,11 @@ public class ResourceLocation
     public String getResourcePath()
     {
         return this.resourcePath;
+    }
+
+    public String getResourceDomain()
+    {
+        return this.resourceDomain;
     }
 
     public String toString()

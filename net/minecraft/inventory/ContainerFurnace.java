@@ -79,6 +79,11 @@ public class ContainerFurnace extends Container
         this.field_178153_g = this.tileFurnace.getField(3);
     }
 
+    public void updateProgressBar(int id, int data)
+    {
+        this.tileFurnace.setField(id, data);
+    }
+
     public boolean canInteractWith(EntityPlayer playerIn)
     {
         return this.tileFurnace.isUseableByPlayer(playerIn);

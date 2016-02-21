@@ -9,6 +9,15 @@ public class C00PacketKeepAlive implements Packet<INetHandlerPlayServer>
 {
     private int key;
 
+    public C00PacketKeepAlive()
+    {
+    }
+
+    public C00PacketKeepAlive(int key)
+    {
+        this.key = key;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */

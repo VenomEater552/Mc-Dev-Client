@@ -142,6 +142,18 @@ public class EntityMinecartTNT extends EntityMinecart
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 10)
+        {
+            this.ignite();
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * Ignites this TNT cart.
      */
@@ -158,6 +170,14 @@ public class EntityMinecartTNT extends EntityMinecart
                 this.worldObj.playSoundAtEntity(this, "game.tnt.primed", 1.0F, 1.0F);
             }
         }
+    }
+
+    /**
+     * Gets the remaining fuse time in ticks.
+     */
+    public int getFuseTicks()
+    {
+        return this.minecartTNTFuse;
     }
 
     /**

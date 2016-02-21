@@ -414,12 +414,41 @@ public class WorldInfo
         return this.worldTime;
     }
 
+    public long getSizeOnDisk()
+    {
+        return this.sizeOnDisk;
+    }
+
     /**
      * Returns the player's NBTTagCompound to be loaded
      */
     public NBTTagCompound getPlayerNBTTagCompound()
     {
         return this.playerTag;
+    }
+
+    /**
+     * Set the x spawn position to the passed in value
+     */
+    public void setSpawnX(int x)
+    {
+        this.spawnX = x;
+    }
+
+    /**
+     * Sets the y spawn position
+     */
+    public void setSpawnY(int y)
+    {
+        this.spawnY = y;
+    }
+
+    /**
+     * Set the z spawn position to the passed in value
+     */
+    public void setSpawnZ(int z)
+    {
+        this.spawnZ = z;
     }
 
     public void setWorldTotalTime(long time)
@@ -469,6 +498,14 @@ public class WorldInfo
     public void setSaveVersion(int version)
     {
         this.saveVersion = version;
+    }
+
+    /**
+     * Return the last time the player was in this world.
+     */
+    public long getLastTimePlayed()
+    {
+        return this.lastTimePlayed;
     }
 
     public int getCleanWeatherTime()

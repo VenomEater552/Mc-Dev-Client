@@ -18,7 +18,10 @@ import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -84,6 +87,12 @@ public class BlockRedstoneWire extends Block
     public boolean isFullCube()
     {
         return false;
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        IBlockState iblockstate = worldIn.getBlockState(pos);
+        return iblockstate.getBlock() != this ? super.colorMultiplier(worldIn, pos, renderPass) : this.colorMultiplier(((Integer)iblockstate.getValue(POWER)).intValue());
     }
 
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
@@ -402,6 +411,62 @@ public class BlockRedstoneWire extends Block
     public boolean canProvidePower()
     {
         return this.canProvidePower;
+    }
+
+    private int colorMultiplier(int powerLevel)
+    {
+        float f = (float)powerLevel / 15.0F;
+        float f1 = f * 0.6F + 0.4F;
+
+        if (powerLevel == 0)
+        {
+            f1 = 0.3F;
+        }
+
+        float f2 = f * f * 0.7F - 0.5F;
+        float f3 = f * f * 0.6F - 0.7F;
+
+        if (f2 < 0.0F)
+        {
+            f2 = 0.0F;
+        }
+
+        if (f3 < 0.0F)
+        {
+            f3 = 0.0F;
+        }
+
+        int i = MathHelper.clamp_int((int)(f1 * 255.0F), 0, 255);
+        int j = MathHelper.clamp_int((int)(f2 * 255.0F), 0, 255);
+        int k = MathHelper.clamp_int((int)(f3 * 255.0F), 0, 255);
+        return -16777216 | i << 16 | j << 8 | k;
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        int i = ((Integer)state.getValue(POWER)).intValue();
+
+        if (i != 0)
+        {
+            double d0 = (double)pos.getX() + 0.5D + ((double)rand.nextFloat() - 0.5D) * 0.2D;
+            double d1 = (double)((float)pos.getY() + 0.0625F);
+            double d2 = (double)pos.getZ() + 0.5D + ((double)rand.nextFloat() - 0.5D) * 0.2D;
+            float f = (float)i / 15.0F;
+            float f1 = f * 0.6F + 0.4F;
+            float f2 = Math.max(0.0F, f * f * 0.7F - 0.5F);
+            float f3 = Math.max(0.0F, f * f * 0.6F - 0.7F);
+            worldIn.spawnParticle(EnumParticleTypes.REDSTONE, d0, d1, d2, (double)f1, (double)f2, (double)f3, new int[0]);
+        }
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.redstone;
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     /**

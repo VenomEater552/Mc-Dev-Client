@@ -53,4 +53,19 @@ public class S35PacketUpdateTileEntity implements Packet<INetHandlerPlayClient>
     {
         handler.handleUpdateTileEntity(this);
     }
+
+    public BlockPos getPos()
+    {
+        return this.blockPos;
+    }
+
+    public int getTileEntityType()
+    {
+        return this.metadata;
+    }
+
+    public NBTTagCompound getNbtCompound()
+    {
+        return this.nbt;
+    }
 }

@@ -245,6 +245,11 @@ public class BlockCauldron extends Block
         return Items.cauldron;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.cauldron;
+    }
+
     public boolean hasComparatorInputOverride()
     {
         return true;

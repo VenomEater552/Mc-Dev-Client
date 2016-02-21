@@ -24,6 +24,11 @@ public class InventoryBasic implements IInventory
         this.inventoryContents = new ItemStack[slotCount];
     }
 
+    public InventoryBasic(IChatComponent title, int slotCount)
+    {
+        this(title.getUnformattedText(), true, slotCount);
+    }
+
     public void func_110134_a(IInvBasic p_110134_1_)
     {
         if (this.field_70480_d == null)

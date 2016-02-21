@@ -60,6 +60,11 @@ public class TileEntityPiston extends TileEntity implements ITickable
         return this.pistonFacing;
     }
 
+    public boolean shouldPistonHeadBeRendered()
+    {
+        return this.shouldHeadBeRendered;
+    }
+
     /**
      * Get interpolated progress value (between lastProgress and progress) given the fractional time between ticks as an
      * argument
@@ -72,6 +77,21 @@ public class TileEntityPiston extends TileEntity implements ITickable
         }
 
         return this.lastProgress + (this.progress - this.lastProgress) * ticks;
+    }
+
+    public float getOffsetX(float ticks)
+    {
+        return this.extending ? (this.getProgress(ticks) - 1.0F) * (float)this.pistonFacing.getFrontOffsetX() : (1.0F - this.getProgress(ticks)) * (float)this.pistonFacing.getFrontOffsetX();
+    }
+
+    public float getOffsetY(float ticks)
+    {
+        return this.extending ? (this.getProgress(ticks) - 1.0F) * (float)this.pistonFacing.getFrontOffsetY() : (1.0F - this.getProgress(ticks)) * (float)this.pistonFacing.getFrontOffsetY();
+    }
+
+    public float getOffsetZ(float ticks)
+    {
+        return this.extending ? (this.getProgress(ticks) - 1.0F) * (float)this.pistonFacing.getFrontOffsetZ() : (1.0F - this.getProgress(ticks)) * (float)this.pistonFacing.getFrontOffsetZ();
     }
 
     private void launchWithSlimeBlock(float p_145863_1_, float p_145863_2_)

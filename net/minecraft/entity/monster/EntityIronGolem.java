@@ -187,9 +187,31 @@ public class EntityIronGolem extends EntityGolem
         return flag;
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 4)
+        {
+            this.attackTimer = 10;
+            this.playSound("mob.irongolem.throw", 1.0F, 1.0F);
+        }
+        else if (id == 11)
+        {
+            this.holdRoseTick = 400;
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     public Village getVillage()
     {
         return this.villageObj;
+    }
+
+    public int getAttackTimer()
+    {
+        return this.attackTimer;
     }
 
     public void setHoldingRose(boolean p_70851_1_)

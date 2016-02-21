@@ -2,7 +2,9 @@ package net.minecraft.block;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -10,8 +12,11 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
@@ -112,6 +117,15 @@ public class BlockSponge extends Block
     }
 
     /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        list.add(new ItemStack(itemIn, 1, 0));
+        list.add(new ItemStack(itemIn, 1, 1));
+    }
+
+    /**
      * Convert the given metadata into a BlockState for this Block
      */
     public IBlockState getStateFromMeta(int meta)
@@ -130,5 +144,60 @@ public class BlockSponge extends Block
     protected BlockState createBlockState()
     {
         return new BlockState(this, new IProperty[] {WET});
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (((Boolean)state.getValue(WET)).booleanValue())
+        {
+            EnumFacing enumfacing = EnumFacing.random(rand);
+
+            if (enumfacing != EnumFacing.UP && !World.doesBlockHaveSolidTopSurface(worldIn, pos.offset(enumfacing)))
+            {
+                double d0 = (double)pos.getX();
+                double d1 = (double)pos.getY();
+                double d2 = (double)pos.getZ();
+
+                if (enumfacing == EnumFacing.DOWN)
+                {
+                    d1 = d1 - 0.05D;
+                    d0 += rand.nextDouble();
+                    d2 += rand.nextDouble();
+                }
+                else
+                {
+                    d1 = d1 + rand.nextDouble() * 0.8D;
+
+                    if (enumfacing.getAxis() == EnumFacing.Axis.X)
+                    {
+                        d2 += rand.nextDouble();
+
+                        if (enumfacing == EnumFacing.EAST)
+                        {
+                            ++d0;
+                        }
+                        else
+                        {
+                            d0 += 0.05D;
+                        }
+                    }
+                    else
+                    {
+                        d0 += rand.nextDouble();
+
+                        if (enumfacing == EnumFacing.SOUTH)
+                        {
+                            ++d2;
+                        }
+                        else
+                        {
+                            d2 += 0.05D;
+                        }
+                    }
+                }
+
+                worldIn.spawnParticle(EnumParticleTypes.DRIP_WATER, d0, d1, d2, 0.0D, 0.0D, 0.0D, new int[0]);
+            }
+        }
     }
 }

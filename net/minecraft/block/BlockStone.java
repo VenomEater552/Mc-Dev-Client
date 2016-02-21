@@ -1,5 +1,6 @@
 package net.minecraft.block;
 
+import java.util.List;
 import java.util.Random;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -10,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.StatCollector;
 
@@ -55,6 +57,17 @@ public class BlockStone extends Block
     public int damageDropped(IBlockState state)
     {
         return ((BlockStone.EnumType)state.getValue(VARIANT)).getMetadata();
+    }
+
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        for (BlockStone.EnumType blockstone$enumtype : BlockStone.EnumType.values())
+        {
+            list.add(new ItemStack(itemIn, 1, blockstone$enumtype.getMetadata()));
+        }
     }
 
     /**

@@ -78,4 +78,39 @@ public class S18PacketEntityTeleport implements Packet<INetHandlerPlayClient>
     {
         handler.handleEntityTeleport(this);
     }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public int getX()
+    {
+        return this.posX;
+    }
+
+    public int getY()
+    {
+        return this.posY;
+    }
+
+    public int getZ()
+    {
+        return this.posZ;
+    }
+
+    public byte getYaw()
+    {
+        return this.yaw;
+    }
+
+    public byte getPitch()
+    {
+        return this.pitch;
+    }
+
+    public boolean getOnGround()
+    {
+        return this.onGround;
+    }
 }

@@ -21,7 +21,11 @@ public abstract class Team
 
     public abstract String formatString(String input);
 
+    public abstract boolean getSeeFriendlyInvisiblesEnabled();
+
     public abstract boolean getAllowFriendlyFire();
+
+    public abstract Team.EnumVisible getNameTagVisibility();
 
     public abstract Collection<String> getMembershipCollection();
 

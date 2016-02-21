@@ -41,4 +41,9 @@ public class S00PacketKeepAlive implements Packet<INetHandlerPlayClient>
     {
         buf.writeVarIntToBuffer(this.id);
     }
+
+    public int func_149134_c()
+    {
+        return this.id;
+    }
 }

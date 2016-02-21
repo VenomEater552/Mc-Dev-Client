@@ -45,6 +45,22 @@ public class EntityPainting extends EntityHanging
         this.updateFacingWithBoundingBox(facing);
     }
 
+    public EntityPainting(World worldIn, BlockPos pos, EnumFacing facing, String title)
+    {
+        this(worldIn, pos, facing);
+
+        for (EntityPainting.EnumArt entitypainting$enumart : EntityPainting.EnumArt.values())
+        {
+            if (entitypainting$enumart.title.equals(title))
+            {
+                this.art = entitypainting$enumart;
+                break;
+            }
+        }
+
+        this.updateFacingWithBoundingBox(facing);
+    }
+
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
@@ -112,6 +128,12 @@ public class EntityPainting extends EntityHanging
      * Sets the location and Yaw/Pitch of an entity in the world
      */
     public void setLocationAndAngles(double x, double y, double z, float yaw, float pitch)
+    {
+        BlockPos blockpos = this.hangingPosition.add(x - this.posX, y - this.posY, z - this.posZ);
+        this.setPosition((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());
+    }
+
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
     {
         BlockPos blockpos = this.hangingPosition.add(x - this.posX, y - this.posY, z - this.posZ);
         this.setPosition((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());

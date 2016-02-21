@@ -65,6 +65,11 @@ public class EntityMinecartMobSpawner extends EntityMinecart
         this.mobSpawnerLogic.writeToNBT(tagCompound);
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        this.mobSpawnerLogic.setDelayToMin(id);
+    }
+
     /**
      * Called to update the entity's position/logic.
      */
@@ -72,5 +77,10 @@ public class EntityMinecartMobSpawner extends EntityMinecart
     {
         super.onUpdate();
         this.mobSpawnerLogic.updateSpawner();
+    }
+
+    public MobSpawnerBaseLogic func_98039_d()
+    {
+        return this.mobSpawnerLogic;
     }
 }

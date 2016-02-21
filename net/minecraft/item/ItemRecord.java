@@ -1,6 +1,7 @@
 package net.minecraft.item;
 
 import com.google.common.collect.Maps;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.block.BlockJukebox;
 import net.minecraft.block.state.IBlockState;
@@ -10,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class ItemRecord extends Item
@@ -56,10 +58,31 @@ public class ItemRecord extends Item
     }
 
     /**
+     * allows items to add custom lines of information to the mouseover description
+     */
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        tooltip.add(this.getRecordNameLocal());
+    }
+
+    public String getRecordNameLocal()
+    {
+        return StatCollector.translateToLocal("item.record." + this.recordName + ".desc");
+    }
+
+    /**
      * Return an item rarity from EnumRarity
      */
     public EnumRarity getRarity(ItemStack stack)
     {
         return EnumRarity.RARE;
+    }
+
+    /**
+     * Return the record item corresponding to the given name.
+     */
+    public static ItemRecord getRecord(String name)
+    {
+        return (ItemRecord)RECORDS.get(name);
     }
 }

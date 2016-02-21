@@ -6,6 +6,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 public class S0APacketUseBed implements Packet<INetHandlerPlayClient>
 {
@@ -48,5 +49,15 @@ public class S0APacketUseBed implements Packet<INetHandlerPlayClient>
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleUseBed(this);
+    }
+
+    public EntityPlayer getPlayer(World worldIn)
+    {
+        return (EntityPlayer)worldIn.getEntityByID(this.playerID);
+    }
+
+    public BlockPos getBedPosition()
+    {
+        return this.bedPos;
     }
 }

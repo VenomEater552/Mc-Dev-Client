@@ -50,4 +50,19 @@ public class S1BPacketEntityAttach implements Packet<INetHandlerPlayClient>
     {
         handler.handleEntityAttach(this);
     }
+
+    public int getLeash()
+    {
+        return this.leash;
+    }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public int getVehicleEntityId()
+    {
+        return this.vehicleEntityId;
+    }
 }

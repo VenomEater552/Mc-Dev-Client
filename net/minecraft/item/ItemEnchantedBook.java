@@ -1,8 +1,11 @@
 package net.minecraft.item;
 
+import java.util.List;
 import java.util.Random;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,6 +13,11 @@ import net.minecraft.util.WeightedRandomChestContent;
 
 public class ItemEnchantedBook extends Item
 {
+    public boolean hasEffect(ItemStack stack)
+    {
+        return true;
+    }
+
     /**
      * Checks isDamagable and if it cannot be stacked
      */
@@ -30,6 +38,29 @@ public class ItemEnchantedBook extends Item
     {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
         return nbttagcompound != null && nbttagcompound.hasKey("StoredEnchantments", 9) ? (NBTTagList)nbttagcompound.getTag("StoredEnchantments") : new NBTTagList();
+    }
+
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     */
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        super.addInformation(stack, playerIn, tooltip, advanced);
+        NBTTagList nbttaglist = this.getEnchantments(stack);
+
+        if (nbttaglist != null)
+        {
+            for (int i = 0; i < nbttaglist.tagCount(); ++i)
+            {
+                int j = nbttaglist.getCompoundTagAt(i).getShort("id");
+                int k = nbttaglist.getCompoundTagAt(i).getShort("lvl");
+
+                if (Enchantment.getEnchantmentById(j) != null)
+                {
+                    tooltip.add(Enchantment.getEnchantmentById(j).getTranslatedName(k));
+                }
+            }
+        }
     }
 
     /**
@@ -80,6 +111,14 @@ public class ItemEnchantedBook extends Item
         ItemStack itemstack = new ItemStack(this);
         this.addEnchantment(itemstack, data);
         return itemstack;
+    }
+
+    public void getAll(Enchantment enchantment, List<ItemStack> list)
+    {
+        for (int i = enchantment.getMinLevel(); i <= enchantment.getMaxLevel(); ++i)
+        {
+            list.add(this.getEnchantedItemStack(new EnchantmentData(enchantment, i)));
+        }
     }
 
     public WeightedRandomChestContent getRandom(Random rand)

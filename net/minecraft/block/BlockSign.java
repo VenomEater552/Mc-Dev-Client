@@ -29,6 +29,12 @@ public class BlockSign extends BlockContainer
         return null;
     }
 
+    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos)
+    {
+        this.setBlockBoundsBasedOnState(worldIn, pos);
+        return super.getSelectedBoundingBox(worldIn, pos);
+    }
+
     public boolean isFullCube()
     {
         return false;
@@ -64,6 +70,11 @@ public class BlockSign extends BlockContainer
      * Get the Item that this Block should drop when harvested.
      */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    {
+        return Items.sign;
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
     {
         return Items.sign;
     }

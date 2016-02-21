@@ -22,19 +22,12 @@ public class ContainerRepair extends Container
     private static final Logger logger = LogManager.getLogger();
 
     /** Here comes out item you merged and/or renamed. */
-    private IInventory outputSlot = new InventoryCraftResult();
+    private IInventory outputSlot;
 
     /**
      * The 2slots where you put your items in that you want to merge and/or rename.
      */
-    private IInventory inputSlots = new InventoryBasic("Repair", true, 2)
-    {
-        public void markDirty()
-        {
-            super.markDirty();
-            ContainerRepair.this.onCraftMatrixChanged(this);
-        }
-    };
+    private IInventory inputSlots;
     private World theWorld;
     private BlockPos selfPosition;
 
@@ -48,8 +41,22 @@ public class ContainerRepair extends Container
     /** The player that has this container open. */
     private final EntityPlayer thePlayer;
 
+    public ContainerRepair(InventoryPlayer playerInventory, World worldIn, EntityPlayer player)
+    {
+        this(playerInventory, worldIn, BlockPos.ORIGIN, player);
+    }
+
     public ContainerRepair(InventoryPlayer playerInventory, final World worldIn, final BlockPos blockPosIn, EntityPlayer player)
     {
+        this.outputSlot = new InventoryCraftResult();
+        this.inputSlots = new InventoryBasic("Repair", true, 2)
+        {
+            public void markDirty()
+            {
+                super.markDirty();
+                ContainerRepair.this.onCraftMatrixChanged(this);
+            }
+        };
         this.selfPosition = blockPosIn;
         this.theWorld = worldIn;
         this.thePlayer = player;
@@ -383,6 +390,14 @@ public class ContainerRepair extends Container
     {
         super.onCraftGuiOpened(listener);
         listener.sendProgressBarUpdate(this, 0, this.maximumCost);
+    }
+
+    public void updateProgressBar(int id, int data)
+    {
+        if (id == 0)
+        {
+            this.maximumCost = data;
+        }
     }
 
     /**

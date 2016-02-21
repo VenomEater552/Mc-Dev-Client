@@ -79,6 +79,11 @@ public class EntityBlaze extends EntityMob
         return "mob.blaze.death";
     }
 
+    public int getBrightnessForRender(float partialTicks)
+    {
+        return 15728880;
+    }
+
     /**
      * Gets how bright this entity is.
      */

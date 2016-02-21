@@ -13,6 +13,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockFarmland extends Block
@@ -120,12 +122,36 @@ public class BlockFarmland extends Block
         }
     }
 
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        switch (side)
+        {
+            case UP:
+                return true;
+
+            case NORTH:
+            case SOUTH:
+            case WEST:
+            case EAST:
+                Block block = worldIn.getBlockState(pos).getBlock();
+                return !block.isOpaqueCube() && block != Blocks.farmland;
+
+            default:
+                return super.shouldSideBeRendered(worldIn, pos, side);
+        }
+    }
+
     /**
      * Get the Item that this Block should drop when harvested.
      */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Blocks.dirt.getItemDropped(Blocks.dirt.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT), rand, fortune);
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Item.getItemFromBlock(Blocks.dirt);
     }
 
     /**

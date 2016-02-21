@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -251,6 +252,23 @@ public class Item
     }
 
     /**
+     * Returns True is the item is renderer in full 3D when hold.
+     */
+    public boolean isFull3D()
+    {
+        return this.bFull3D;
+    }
+
+    /**
+     * Returns true if this item should be rotated by 180 degrees around the Y axis when being held in an entities
+     * hands.
+     */
+    public boolean shouldRotateAroundWhenRendering()
+    {
+        return false;
+    }
+
+    /**
      * Sets the unlocalized name of this item to the string passed as the parameter, prefixed by "item."
      */
     public Item setUnlocalizedName(String unlocalizedName)
@@ -311,6 +329,11 @@ public class Item
     public boolean hasContainerItem()
     {
         return this.containerItem != null;
+    }
+
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        return 16777215;
     }
 
     /**
@@ -378,9 +401,21 @@ public class Item
         return this.getPotionEffect(stack) != null;
     }
 
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     */
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+    }
+
     public String getItemStackDisplayName(ItemStack stack)
     {
         return ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
+    }
+
+    public boolean hasEffect(ItemStack stack)
+    {
+        return stack.isItemEnchanted();
     }
 
     /**
@@ -424,6 +459,22 @@ public class Item
     public int getItemEnchantability()
     {
         return 0;
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        subItems.add(new ItemStack(itemIn, 1, 0));
+    }
+
+    /**
+     * gets the CreativeTab this item is displayed on
+     */
+    public CreativeTabs getCreativeTab()
+    {
+        return this.tabToDisplayOn;
     }
 
     /**

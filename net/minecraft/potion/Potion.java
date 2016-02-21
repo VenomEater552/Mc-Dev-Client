@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 
 public class Potion
 {
@@ -266,6 +267,43 @@ public class Potion
         return this.name;
     }
 
+    /**
+     * Returns true if the potion has a associated status icon to display in then inventory when active.
+     */
+    public boolean hasStatusIcon()
+    {
+        return this.statusIconIndex >= 0;
+    }
+
+    /**
+     * Returns the index for the icon to display when the potion is active.
+     */
+    public int getStatusIconIndex()
+    {
+        return this.statusIconIndex;
+    }
+
+    /**
+     * This method returns true if the potion effect is bad - negative - for the entity.
+     */
+    public boolean isBadEffect()
+    {
+        return this.isBadEffect;
+    }
+
+    public static String getDurationString(PotionEffect effect)
+    {
+        if (effect.getIsPotionDurationMax())
+        {
+            return "**:**";
+        }
+        else
+        {
+            int i = effect.getDuration();
+            return StringUtils.ticksToElapsedTime(i);
+        }
+    }
+
     protected Potion setEffectiveness(double effectivenessIn)
     {
         this.effectiveness = effectivenessIn;
@@ -298,6 +336,11 @@ public class Potion
         AttributeModifier attributemodifier = new AttributeModifier(UUID.fromString(p_111184_2_), this.getName(), p_111184_3_, p_111184_5_);
         this.attributeModifierMap.put(p_111184_1_, attributemodifier);
         return this;
+    }
+
+    public Map<IAttribute, AttributeModifier> getAttributeModifierMap()
+    {
+        return this.attributeModifierMap;
     }
 
     public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, BaseAttributeMap p_111187_2_, int amplifier)

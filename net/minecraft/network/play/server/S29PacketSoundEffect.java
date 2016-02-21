@@ -58,6 +58,36 @@ public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient>
         buf.writeByte(this.soundPitch);
     }
 
+    public String getSoundName()
+    {
+        return this.soundName;
+    }
+
+    public double getX()
+    {
+        return (double)((float)this.posX / 8.0F);
+    }
+
+    public double getY()
+    {
+        return (double)((float)this.posY / 8.0F);
+    }
+
+    public double getZ()
+    {
+        return (double)((float)this.posZ / 8.0F);
+    }
+
+    public float getVolume()
+    {
+        return this.soundVolume;
+    }
+
+    public float getPitch()
+    {
+        return (float)this.soundPitch / 63.0F;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */

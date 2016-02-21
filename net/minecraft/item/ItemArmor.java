@@ -86,6 +86,25 @@ public class ItemArmor extends Item
         BlockDispenser.dispenseBehaviorRegistry.putObject(this, dispenserBehavior);
     }
 
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        if (renderPass > 0)
+        {
+            return 16777215;
+        }
+        else
+        {
+            int i = this.getColor(stack);
+
+            if (i < 0)
+            {
+                i = 16777215;
+            }
+
+            return i;
+        }
+    }
+
     /**
      * Return the enchantability factor of the item, most of the time is based on material.
      */
@@ -252,6 +271,11 @@ public class ItemArmor extends Item
         public Item getRepairItem()
         {
             return this == LEATHER ? Items.leather : (this == CHAIN ? Items.iron_ingot : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == DIAMOND ? Items.diamond : null))));
+        }
+
+        public String getName()
+        {
+            return this.name;
         }
     }
 }

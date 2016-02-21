@@ -138,6 +138,19 @@ public class TileEntitySign extends TileEntity
         return this.isEditable;
     }
 
+    /**
+     * Sets the sign's isEditable flag to the specified parameter.
+     */
+    public void setEditable(boolean isEditableIn)
+    {
+        this.isEditable = isEditableIn;
+
+        if (!isEditableIn)
+        {
+            this.player = null;
+        }
+    }
+
     public void setPlayer(EntityPlayer playerIn)
     {
         this.player = playerIn;

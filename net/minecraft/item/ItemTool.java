@@ -60,6 +60,14 @@ public class ItemTool extends Item
         return true;
     }
 
+    /**
+     * Returns True is the item is renderer in full 3D when hold.
+     */
+    public boolean isFull3D()
+    {
+        return true;
+    }
+
     public Item.ToolMaterial getToolMaterial()
     {
         return this.toolMaterial;

@@ -45,6 +45,11 @@ public class EntityMagmaCube extends EntitySlime
         return this.getSlimeSize() * 3;
     }
 
+    public int getBrightnessForRender(float partialTicks)
+    {
+        return 15728880;
+    }
+
     /**
      * Gets how bright this entity is.
      */

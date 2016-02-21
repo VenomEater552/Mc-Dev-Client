@@ -1,5 +1,6 @@
 package net.minecraft.block;
 
+import java.util.List;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -8,8 +9,11 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
@@ -122,12 +126,28 @@ public class BlockWall extends Block
     }
 
     /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        for (BlockWall.EnumType blockwall$enumtype : BlockWall.EnumType.values())
+        {
+            list.add(new ItemStack(itemIn, 1, blockwall$enumtype.getMetadata()));
+        }
+    }
+
+    /**
      * Gets the metadata of the item this Block can drop. This method is called when the block gets destroyed. It
      * returns the metadata of the dropped item based on the old metadata of the block.
      */
     public int damageDropped(IBlockState state)
     {
         return ((BlockWall.EnumType)state.getValue(VARIANT)).getMetadata();
+    }
+
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return side == EnumFacing.DOWN ? super.shouldSideBeRendered(worldIn, pos, side) : true;
     }
 
     /**

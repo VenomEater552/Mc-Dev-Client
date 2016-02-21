@@ -31,7 +31,10 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.world.ColorizerFoliage;
+import net.minecraft.world.ColorizerGrass;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
@@ -319,6 +322,16 @@ public abstract class BiomeGenBase
         return this;
     }
 
+    /**
+     * takes temperature, returns color
+     */
+    public int getSkyColorByTemp(float p_76731_1_)
+    {
+        p_76731_1_ = p_76731_1_ / 3.0F;
+        p_76731_1_ = MathHelper.clamp_float(p_76731_1_, -1.0F, 1.0F);
+        return MathHelper.func_181758_c(0.62222224F - p_76731_1_ * 0.05F, 0.5F + p_76731_1_ * 0.1F, 1.0F);
+    }
+
     public List<BiomeGenBase.SpawnListEntry> getSpawnableList(EnumCreatureType creatureType)
     {
         switch (creatureType)
@@ -381,6 +394,14 @@ public abstract class BiomeGenBase
     }
 
     /**
+     * Gets a floating point representation of this biome's rainfall
+     */
+    public final float getFloatRainfall()
+    {
+        return this.rainfall;
+    }
+
+    /**
      * Gets a floating point representation of this biome's temperature
      */
     public final float getFloatTemperature(BlockPos pos)
@@ -399,6 +420,20 @@ public abstract class BiomeGenBase
     public void decorate(World worldIn, Random rand, BlockPos pos)
     {
         this.theBiomeDecorator.decorate(worldIn, rand, this, pos);
+    }
+
+    public int getGrassColorAtPos(BlockPos pos)
+    {
+        double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
+        double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+        return ColorizerGrass.getGrassColor(d0, d1);
+    }
+
+    public int getFoliageColorAtPos(BlockPos pos)
+    {
+        double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
+        double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+        return ColorizerFoliage.getFoliageColor(d0, d1);
     }
 
     public boolean isSnowyBiome()

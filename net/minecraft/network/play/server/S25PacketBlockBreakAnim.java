@@ -50,4 +50,19 @@ public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient>
     {
         handler.handleBlockBreakAnim(this);
     }
+
+    public int getBreakerId()
+    {
+        return this.breakerId;
+    }
+
+    public BlockPos getPosition()
+    {
+        return this.position;
+    }
+
+    public int getProgress()
+    {
+        return this.progress;
+    }
 }

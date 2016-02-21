@@ -23,6 +23,9 @@ public class PotionEffect
 
     /** Whether the potion effect came from a beacon */
     private boolean isAmbient;
+
+    /** True if potion effect duration is at maximum, false otherwise. */
+    private boolean isPotionDurationMax;
     private boolean showParticles;
 
     public PotionEffect(int id, int effectDuration)
@@ -235,5 +238,18 @@ public class PotionEffect
         {
             return null;
         }
+    }
+
+    /**
+     * Toggle the isPotionDurationMax field.
+     */
+    public void setPotionDurationMax(boolean maxDuration)
+    {
+        this.isPotionDurationMax = maxDuration;
+    }
+
+    public boolean getIsPotionDurationMax()
+    {
+        return this.isPotionDurationMax;
     }
 }

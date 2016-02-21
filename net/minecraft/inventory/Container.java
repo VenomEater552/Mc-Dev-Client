@@ -16,6 +16,7 @@ public abstract class Container
     public List<ItemStack> inventoryItemStacks = Lists.<ItemStack>newArrayList();
     public List<Slot> inventorySlots = Lists.<Slot>newArrayList();
     public int windowId;
+    private short transactionID;
 
     /**
      * The current drag mode (0 : evenly split, 1 : one item by slot, 2 : not used ?)
@@ -51,6 +52,14 @@ public abstract class Container
             listener.updateCraftingInventory(this, this.getInventory());
             this.detectAndSendChanges();
         }
+    }
+
+    /**
+     * Remove the given Listener. Method name is for legacy.
+     */
+    public void removeCraftingFromCrafters(ICrafting listeners)
+    {
+        this.crafters.remove(listeners);
     }
 
     public List<ItemStack> getInventory()
@@ -532,6 +541,30 @@ public abstract class Container
     }
 
     /**
+     * places itemstacks in first x slots, x being aitemstack.lenght
+     */
+    public void putStacksInSlots(ItemStack[] p_75131_1_)
+    {
+        for (int i = 0; i < p_75131_1_.length; ++i)
+        {
+            this.getSlot(i).putStack(p_75131_1_[i]);
+        }
+    }
+
+    public void updateProgressBar(int id, int data)
+    {
+    }
+
+    /**
+     * Gets a unique transaction ID. Parameter is unused.
+     */
+    public short getNextTransactionID(InventoryPlayer p_75136_1_)
+    {
+        ++this.transactionID;
+        return this.transactionID;
+    }
+
+    /**
      * gets whether or not the player can craft in this inventory or not
      */
     public boolean getCanCraft(EntityPlayer p_75129_1_)
@@ -662,6 +695,11 @@ public abstract class Container
     public static int getDragEvent(int p_94532_0_)
     {
         return p_94532_0_ & 3;
+    }
+
+    public static int func_94534_d(int p_94534_0_, int p_94534_1_)
+    {
+        return p_94534_0_ & 3 | (p_94534_1_ & 3) << 2;
     }
 
     public static boolean isValidDragMode(int dragModeIn, EntityPlayer player)

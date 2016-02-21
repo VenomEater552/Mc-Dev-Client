@@ -1,6 +1,7 @@
 package net.minecraft.item;
 
 import com.mojang.authlib.GameProfile;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSkull;
@@ -114,6 +115,17 @@ public class ItemSkull extends Item
 
                 return true;
             }
+        }
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        for (int i = 0; i < skullTypes.length; ++i)
+        {
+            subItems.add(new ItemStack(itemIn, 1, i));
         }
     }
 

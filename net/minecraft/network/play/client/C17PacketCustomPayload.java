@@ -11,6 +11,21 @@ public class C17PacketCustomPayload implements Packet<INetHandlerPlayServer>
     private String channel;
     private PacketBuffer data;
 
+    public C17PacketCustomPayload()
+    {
+    }
+
+    public C17PacketCustomPayload(String channelIn, PacketBuffer dataIn)
+    {
+        this.channel = channelIn;
+        this.data = dataIn;
+
+        if (dataIn.writerIndex() > 32767)
+        {
+            throw new IllegalArgumentException("Payload may not be larger than 32767 bytes");
+        }
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

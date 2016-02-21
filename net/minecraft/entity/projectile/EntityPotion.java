@@ -35,6 +35,11 @@ public class EntityPotion extends EntityThrowable
         this.potionDamage = potionDamageIn;
     }
 
+    public EntityPotion(World worldIn, double x, double y, double z, int p_i1791_8_)
+    {
+        this(worldIn, x, y, z, new ItemStack(Items.potionitem, 1, p_i1791_8_));
+    }
+
     public EntityPotion(World worldIn, double x, double y, double z, ItemStack potionDamageIn)
     {
         super(worldIn, x, y, z);

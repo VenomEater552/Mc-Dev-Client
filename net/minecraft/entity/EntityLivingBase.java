@@ -783,6 +783,14 @@ public abstract class EntityLivingBase extends Entity
     }
 
     /**
+     * Remove the speified potion effect from this entity.
+     */
+    public void removePotionEffectClient(int potionId)
+    {
+        this.activePotionsMap.remove(Integer.valueOf(potionId));
+    }
+
+    /**
      * Remove the specified potion effect from this entity.
      */
     public void removePotionEffect(int potionId)
@@ -1162,6 +1170,15 @@ public abstract class EntityLivingBase extends Entity
     }
 
     /**
+     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
+     */
+    public void performHurtAnimation()
+    {
+        this.hurtTime = this.maxHurtTime = 10;
+        this.attackedAtYaw = 0.0F;
+    }
+
+    /**
      * Returns the current armor value as determined by a call to InventoryPlayer.getTotalArmorValue
      */
     public int getTotalArmorValue()
@@ -1325,6 +1342,41 @@ public abstract class EntityLivingBase extends Entity
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 2)
+        {
+            this.limbSwingAmount = 1.5F;
+            this.hurtResistantTime = this.maxHurtResistantTime;
+            this.hurtTime = this.maxHurtTime = 10;
+            this.attackedAtYaw = 0.0F;
+            String s = this.getHurtSound();
+
+            if (s != null)
+            {
+                this.playSound(this.getHurtSound(), this.getSoundVolume(), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+            }
+
+            this.attackEntityFrom(DamageSource.generic, 0.0F);
+        }
+        else if (id == 3)
+        {
+            String s1 = this.getDeathSound();
+
+            if (s1 != null)
+            {
+                this.playSound(this.getDeathSound(), this.getSoundVolume(), (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+            }
+
+            this.setHealth(0.0F);
+            this.onDeath(DamageSource.generic);
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * sets the dead flag. Used when you fall off the bottom of the world.
      */
@@ -1390,6 +1442,8 @@ public abstract class EntityLivingBase extends Entity
      * 0: Tool in Hand; 1-4: Armor
      */
     public abstract ItemStack getEquipmentInSlot(int slotIn);
+
+    public abstract ItemStack getCurrentArmor(int slotIn);
 
     /**
      * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
@@ -1484,6 +1538,11 @@ public abstract class EntityLivingBase extends Entity
         }
 
         this.setPositionAndUpdate(d0, d1, d2);
+    }
+
+    public boolean getAlwaysRenderNameTagForRender()
+    {
+        return false;
     }
 
     protected float getJumpUpwardsMotion()
@@ -2038,6 +2097,16 @@ public abstract class EntityLivingBase extends Entity
         this.fallDistance = 0.0F;
     }
 
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
+    {
+        this.newPosX = x;
+        this.newPosY = y;
+        this.newPosZ = z;
+        this.newRotationYaw = (double)yaw;
+        this.newRotationPitch = (double)pitch;
+        this.newPosRotationIncrements = posRotationIncrements;
+    }
+
     public void setJumping(boolean p_70637_1_)
     {
         this.isJumping = p_70637_1_;
@@ -2100,6 +2169,21 @@ public abstract class EntityLivingBase extends Entity
             float f1 = this.prevRotationYawHead + (this.rotationYawHead - this.prevRotationYawHead) * partialTicks;
             return this.getVectorForRotation(f, f1);
         }
+    }
+
+    /**
+     * Returns where in the swing animation the living entity is (from 0 to 1).  Args: partialTickTime
+     */
+    public float getSwingProgress(float partialTickTime)
+    {
+        float f = this.swingProgress - this.prevSwingProgress;
+
+        if (f < 0.0F)
+        {
+            ++f;
+        }
+
+        return this.prevSwingProgress + f * partialTickTime;
     }
 
     /**

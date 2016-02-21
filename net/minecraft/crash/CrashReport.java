@@ -251,6 +251,14 @@ public class CrashReport
     }
 
     /**
+     * Gets the file this crash report is saved into.
+     */
+    public File getFile()
+    {
+        return this.crashReportFile;
+    }
+
+    /**
      * Saves this CrashReport to the given file and returns a value indicating whether we were successful at doing so.
      */
     public boolean saveToFile(File toFile)

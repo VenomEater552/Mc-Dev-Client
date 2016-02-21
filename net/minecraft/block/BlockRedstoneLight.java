@@ -76,6 +76,11 @@ public class BlockRedstoneLight extends Block
         return Item.getItemFromBlock(Blocks.redstone_lamp);
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Item.getItemFromBlock(Blocks.redstone_lamp);
+    }
+
     protected ItemStack createStackedBlock(IBlockState state)
     {
         return new ItemStack(Blocks.redstone_lamp);

@@ -40,6 +40,23 @@ public abstract class EntityFireball extends Entity
     {
     }
 
+    /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        double d0 = this.getEntityBoundingBox().getAverageEdgeLength() * 4.0D;
+
+        if (Double.isNaN(d0))
+        {
+            d0 = 4.0D;
+        }
+
+        d0 = d0 * 64.0D;
+        return distance < d0 * d0;
+    }
+
     public EntityFireball(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ)
     {
         super(worldIn);
@@ -329,5 +346,10 @@ public abstract class EntityFireball extends Entity
     public float getBrightness(float partialTicks)
     {
         return 1.0F;
+    }
+
+    public int getBrightnessForRender(float partialTicks)
+    {
+        return 15728880;
     }
 }

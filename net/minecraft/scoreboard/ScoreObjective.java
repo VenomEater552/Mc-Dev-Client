@@ -19,6 +19,11 @@ public class ScoreObjective
         this.renderType = objectiveCriteriaIn.getRenderType();
     }
 
+    public Scoreboard getScoreboard()
+    {
+        return this.theScoreboard;
+    }
+
     public String getName()
     {
         return this.name;

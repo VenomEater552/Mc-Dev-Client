@@ -155,6 +155,22 @@ public abstract class TileEntity
         }
     }
 
+    /**
+     * Returns the square of the distance between this entity and the passed in coordinates.
+     */
+    public double getDistanceSq(double x, double y, double z)
+    {
+        double d0 = (double)this.pos.getX() + 0.5D - x;
+        double d1 = (double)this.pos.getY() + 0.5D - y;
+        double d2 = (double)this.pos.getZ() + 0.5D - z;
+        return d0 * d0 + d1 * d1 + d2 * d2;
+    }
+
+    public double getMaxRenderDistanceSquared()
+    {
+        return 4096.0D;
+    }
+
     public BlockPos getPos()
     {
         return this.pos;

@@ -64,4 +64,9 @@ public class S37PacketStatistics implements Packet<INetHandlerPlayClient>
             buf.writeVarIntToBuffer(((Integer)entry.getValue()).intValue());
         }
     }
+
+    public Map<StatBase, Integer> func_148974_c()
+    {
+        return this.field_148976_a;
+    }
 }

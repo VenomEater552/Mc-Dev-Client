@@ -121,6 +121,11 @@ public class FoodStats
         return this.foodLevel;
     }
 
+    public int getPrevFoodLevel()
+    {
+        return this.prevFoodLevel;
+    }
+
     /**
      * Get whether the player must eat food.
      */
@@ -148,5 +153,10 @@ public class FoodStats
     public void setFoodLevel(int foodLevelIn)
     {
         this.foodLevel = foodLevelIn;
+    }
+
+    public void setFoodSaturationLevel(float foodSaturationLevelIn)
+    {
+        this.foodSaturationLevel = foodSaturationLevelIn;
     }
 }

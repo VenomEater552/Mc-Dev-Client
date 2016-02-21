@@ -27,7 +27,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-public class EntityDragon extends EntityLiving implements IEntityMultiPart, IMob
+public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart, IMob
 {
     public double targetX;
     public double targetY;

@@ -123,9 +123,19 @@ public class S39PacketPlayerAbilities implements Packet<INetHandlerPlayClient>
         this.creativeMode = isCreativeMode;
     }
 
+    public float getFlySpeed()
+    {
+        return this.flySpeed;
+    }
+
     public void setFlySpeed(float flySpeedIn)
     {
         this.flySpeed = flySpeedIn;
+    }
+
+    public float getWalkSpeed()
+    {
+        return this.walkSpeed;
     }
 
     public void setWalkSpeed(float walkSpeedIn)

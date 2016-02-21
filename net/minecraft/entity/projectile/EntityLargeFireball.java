@@ -16,6 +16,11 @@ public class EntityLargeFireball extends EntityFireball
         super(worldIn);
     }
 
+    public EntityLargeFireball(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ)
+    {
+        super(worldIn, x, y, z, accelX, accelY, accelZ);
+    }
+
     public EntityLargeFireball(World worldIn, EntityLivingBase shooter, double accelX, double accelY, double accelZ)
     {
         super(worldIn, shooter, accelX, accelY, accelZ);

@@ -26,6 +26,25 @@ public class StatFileWriter
         return achievementIn.parentAchievement == null || this.hasAchievementUnlocked(achievementIn.parentAchievement);
     }
 
+    public int func_150874_c(Achievement p_150874_1_)
+    {
+        if (this.hasAchievementUnlocked(p_150874_1_))
+        {
+            return 0;
+        }
+        else
+        {
+            int i = 0;
+
+            for (Achievement achievement = p_150874_1_.parentAchievement; achievement != null && !this.hasAchievementUnlocked(achievement); ++i)
+            {
+                achievement = achievement.parentAchievement;
+            }
+
+            return i;
+        }
+    }
+
     public void increaseStat(EntityPlayer player, StatBase stat, int amount)
     {
         if (!stat.isAchievement() || this.canUnlockAchievement((Achievement)stat))

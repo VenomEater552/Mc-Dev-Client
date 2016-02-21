@@ -115,6 +115,14 @@ public class BlockRedstoneOre extends Block
         }
     }
 
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (this.isOn)
+        {
+            this.spawnParticles(worldIn, pos);
+        }
+    }
+
     private void spawnParticles(World worldIn, BlockPos pos)
     {
         Random random = worldIn.rand;

@@ -58,6 +58,19 @@ public class WorldType
     }
 
     /**
+     * Gets the translation key for the name of this world type.
+     */
+    public String getTranslateName()
+    {
+        return "generator." + this.worldType;
+    }
+
+    public String func_151359_c()
+    {
+        return this.getTranslateName() + ".info";
+    }
+
+    /**
      * Returns generatorVersion.
      */
     public int getGeneratorVersion()
@@ -77,6 +90,14 @@ public class WorldType
     {
         this.canBeCreated = enable;
         return this;
+    }
+
+    /**
+     * Gets whether this WorldType can be used to generate a new world.
+     */
+    public boolean getCanBeCreated()
+    {
+        return this.canBeCreated;
     }
 
     /**
@@ -112,6 +133,15 @@ public class WorldType
     public int getWorldTypeID()
     {
         return this.worldTypeId;
+    }
+
+    /**
+     * returns true if selecting this worldtype from the customize menu should display the generator.[worldtype].info
+     * message
+     */
+    public boolean showWorldInfoNotice()
+    {
+        return this.hasNotificationData;
     }
 
     /**

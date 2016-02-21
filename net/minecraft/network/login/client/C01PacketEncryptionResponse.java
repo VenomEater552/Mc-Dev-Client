@@ -2,6 +2,7 @@ package net.minecraft.network.login.client;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import javax.crypto.SecretKey;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -12,6 +13,16 @@ public class C01PacketEncryptionResponse implements Packet<INetHandlerLoginServe
 {
     private byte[] secretKeyEncrypted = new byte[0];
     private byte[] verifyTokenEncrypted = new byte[0];
+
+    public C01PacketEncryptionResponse()
+    {
+    }
+
+    public C01PacketEncryptionResponse(SecretKey secretKey, PublicKey publicKey, byte[] verifyToken)
+    {
+        this.secretKeyEncrypted = CryptManager.encryptData(publicKey, secretKey.getEncoded());
+        this.verifyTokenEncrypted = CryptManager.encryptData(publicKey, verifyToken);
+    }
 
     /**
      * Reads the raw packet data from the data stream.

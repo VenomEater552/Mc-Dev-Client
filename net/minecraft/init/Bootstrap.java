@@ -530,4 +530,9 @@ public class Bootstrap
         System.setErr(new LoggingPrintStream("STDERR", System.err));
         System.setOut(new LoggingPrintStream("STDOUT", SYSOUT));
     }
+
+    public static void printToSYSOUT(String p_179870_0_)
+    {
+        SYSOUT.println(p_179870_0_);
+    }
 }

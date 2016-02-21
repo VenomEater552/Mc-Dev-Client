@@ -16,6 +16,15 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
     protected boolean moving;
     protected boolean rotating;
 
+    public C03PacketPlayer()
+    {
+    }
+
+    public C03PacketPlayer(boolean isOnGround)
+    {
+        this.onGround = isOnGround;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */
@@ -92,6 +101,15 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
             this.moving = true;
         }
 
+        public C04PacketPlayerPosition(double posX, double posY, double posZ, boolean isOnGround)
+        {
+            this.x = posX;
+            this.y = posY;
+            this.z = posZ;
+            this.onGround = isOnGround;
+            this.moving = true;
+        }
+
         public void readPacketData(PacketBuffer buf) throws IOException
         {
             this.x = buf.readDouble();
@@ -116,6 +134,14 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
             this.rotating = true;
         }
 
+        public C05PacketPlayerLook(float playerYaw, float playerPitch, boolean isOnGround)
+        {
+            this.yaw = playerYaw;
+            this.pitch = playerPitch;
+            this.onGround = isOnGround;
+            this.rotating = true;
+        }
+
         public void readPacketData(PacketBuffer buf) throws IOException
         {
             this.yaw = buf.readFloat();
@@ -137,6 +163,18 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer>
         {
             this.moving = true;
             this.rotating = true;
+        }
+
+        public C06PacketPlayerPosLook(double playerX, double playerY, double playerZ, float playerYaw, float playerPitch, boolean playerIsOnGround)
+        {
+            this.x = playerX;
+            this.y = playerY;
+            this.z = playerZ;
+            this.yaw = playerYaw;
+            this.pitch = playerPitch;
+            this.onGround = playerIsOnGround;
+            this.rotating = true;
+            this.moving = true;
         }
 
         public void readPacketData(PacketBuffer buf) throws IOException

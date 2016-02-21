@@ -32,6 +32,8 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
     /** List of effects that Beacon can apply */
     public static final Potion[][] effectsList = new Potion[][] {{Potion.moveSpeed, Potion.digSpeed}, {Potion.resistance, Potion.jump}, {Potion.damageBoost}, {Potion.regeneration}};
     private final List<TileEntityBeacon.BeamSegment> beamSegments = Lists.<TileEntityBeacon.BeamSegment>newArrayList();
+    private long beamRenderCounter;
+    private float field_146014_j;
     private boolean isComplete;
 
     /** Level of this beacon's pyramid. */
@@ -204,6 +206,43 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
         }
     }
 
+    public List<TileEntityBeacon.BeamSegment> getBeamSegments()
+    {
+        return this.beamSegments;
+    }
+
+    public float shouldBeamRender()
+    {
+        if (!this.isComplete)
+        {
+            return 0.0F;
+        }
+        else
+        {
+            int i = (int)(this.worldObj.getTotalWorldTime() - this.beamRenderCounter);
+            this.beamRenderCounter = this.worldObj.getTotalWorldTime();
+
+            if (i > 1)
+            {
+                this.field_146014_j -= (float)i / 40.0F;
+
+                if (this.field_146014_j < 0.0F)
+                {
+                    this.field_146014_j = 0.0F;
+                }
+            }
+
+            this.field_146014_j += 0.025F;
+
+            if (this.field_146014_j > 1.0F)
+            {
+                this.field_146014_j = 1.0F;
+            }
+
+            return this.field_146014_j;
+        }
+    }
+
     /**
      * Allows for a specialized description packet to be created. This is often used to sync tile entity data from the
      * server to the client easily. For example this is used by signs to synchronise the text to be displayed.
@@ -213,6 +252,11 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         this.writeToNBT(nbttagcompound);
         return new S35PacketUpdateTileEntity(this.pos, 3, nbttagcompound);
+    }
+
+    public double getMaxRenderDistanceSquared()
+    {
+        return 65536.0D;
     }
 
     private int func_183001_h(int p_183001_1_)
@@ -453,6 +497,11 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
         public float[] getColors()
         {
             return this.colors;
+        }
+
+        public int getHeight()
+        {
+            return this.height;
         }
     }
 }

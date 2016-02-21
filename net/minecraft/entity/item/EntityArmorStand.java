@@ -104,6 +104,11 @@ public class EntityArmorStand extends EntityLivingBase
         return this.contents[slotIn];
     }
 
+    public ItemStack getCurrentArmor(int slotIn)
+    {
+        return this.contents[slotIn + 1];
+    }
+
     /**
      * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
      */
@@ -596,6 +601,23 @@ public class EntityArmorStand extends EntityLivingBase
         }
     }
 
+    /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        double d0 = this.getEntityBoundingBox().getAverageEdgeLength() * 4.0D;
+
+        if (Double.isNaN(d0) || d0 == 0.0D)
+        {
+            d0 = 4.0D;
+        }
+
+        d0 = d0 * 64.0D;
+        return distance < d0 * d0;
+    }
+
     private void playParticles()
     {
         if (this.worldObj instanceof WorldServer)
@@ -935,6 +957,26 @@ public class EntityArmorStand extends EntityLivingBase
     public Rotations getBodyRotation()
     {
         return this.bodyRotation;
+    }
+
+    public Rotations getLeftArmRotation()
+    {
+        return this.leftArmRotation;
+    }
+
+    public Rotations getRightArmRotation()
+    {
+        return this.rightArmRotation;
+    }
+
+    public Rotations getLeftLegRotation()
+    {
+        return this.leftLegRotation;
+    }
+
+    public Rotations getRightLegRotation()
+    {
+        return this.rightLegRotation;
     }
 
     /**

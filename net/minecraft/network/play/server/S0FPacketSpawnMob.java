@@ -126,4 +126,69 @@ public class S0FPacketSpawnMob implements Packet<INetHandlerPlayClient>
     {
         handler.handleSpawnMob(this);
     }
+
+    public List<DataWatcher.WatchableObject> func_149027_c()
+    {
+        if (this.watcher == null)
+        {
+            this.watcher = this.field_149043_l.getAllWatched();
+        }
+
+        return this.watcher;
+    }
+
+    public int getEntityID()
+    {
+        return this.entityId;
+    }
+
+    public int getEntityType()
+    {
+        return this.type;
+    }
+
+    public int getX()
+    {
+        return this.x;
+    }
+
+    public int getY()
+    {
+        return this.y;
+    }
+
+    public int getZ()
+    {
+        return this.z;
+    }
+
+    public int getVelocityX()
+    {
+        return this.velocityX;
+    }
+
+    public int getVelocityY()
+    {
+        return this.velocityY;
+    }
+
+    public int getVelocityZ()
+    {
+        return this.velocityZ;
+    }
+
+    public byte getYaw()
+    {
+        return this.yaw;
+    }
+
+    public byte getPitch()
+    {
+        return this.pitch;
+    }
+
+    public byte getHeadPitch()
+    {
+        return this.headPitch;
+    }
 }

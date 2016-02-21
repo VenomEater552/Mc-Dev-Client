@@ -76,4 +76,34 @@ public class S2DPacketOpenWindow implements Packet<INetHandlerPlayClient>
             buf.writeInt(this.entityId);
         }
     }
+
+    public int getWindowId()
+    {
+        return this.windowId;
+    }
+
+    public String getGuiId()
+    {
+        return this.inventoryType;
+    }
+
+    public IChatComponent getWindowTitle()
+    {
+        return this.windowTitle;
+    }
+
+    public int getSlotCount()
+    {
+        return this.slotCount;
+    }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public boolean hasSlots()
+    {
+        return this.slotCount > 0;
+    }
 }

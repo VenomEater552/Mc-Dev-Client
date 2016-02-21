@@ -1,5 +1,6 @@
 package net.minecraft.entity.ai.attributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.util.Collection;
@@ -136,6 +137,19 @@ public class ModifiableAttributeInstance implements IAttributeInstance
 
         this.mapByUUID.remove(modifier.getID());
         this.flagForUpdate();
+    }
+
+    public void removeAllModifiers()
+    {
+        Collection<AttributeModifier> collection = this.func_111122_c();
+
+        if (collection != null)
+        {
+            for (AttributeModifier attributemodifier : Lists.newArrayList(collection))
+            {
+                this.removeModifier(attributemodifier);
+            }
+        }
     }
 
     public double getAttributeValue()

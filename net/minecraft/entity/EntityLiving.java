@@ -260,6 +260,18 @@ public abstract class EntityLiving extends EntityLivingBase
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 20)
+        {
+            this.spawnExplosionParticle();
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * Called to update the entity's position/logic.
      */
@@ -705,6 +717,14 @@ public abstract class EntityLiving extends EntityLivingBase
     public boolean isNotColliding()
     {
         return this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this) && this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty() && !this.worldObj.isAnyLiquid(this.getEntityBoundingBox());
+    }
+
+    /**
+     * Returns render size modifier
+     */
+    public float getRenderSizeModifier()
+    {
+        return 1.0F;
     }
 
     /**

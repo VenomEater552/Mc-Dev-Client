@@ -97,6 +97,22 @@ public abstract class EntityTameable extends EntityAnimal implements IEntityOwna
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 7)
+        {
+            this.playTameEffect(true);
+        }
+        else if (id == 6)
+        {
+            this.playTameEffect(false);
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     public boolean isTamed()
     {
         return (this.dataWatcher.getWatchableObjectByte(16) & 4) != 0;

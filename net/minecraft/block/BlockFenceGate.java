@@ -156,6 +156,11 @@ public class BlockFenceGate extends BlockDirectional
         }
     }
 
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return true;
+    }
+
     /**
      * Convert the given metadata into a BlockState for this Block
      */

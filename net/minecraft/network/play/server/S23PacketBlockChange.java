@@ -49,4 +49,14 @@ public class S23PacketBlockChange implements Packet<INetHandlerPlayClient>
     {
         handler.handleBlockChange(this);
     }
+
+    public IBlockState getBlockState()
+    {
+        return this.blockState;
+    }
+
+    public BlockPos getBlockPosition()
+    {
+        return this.blockPosition;
+    }
 }

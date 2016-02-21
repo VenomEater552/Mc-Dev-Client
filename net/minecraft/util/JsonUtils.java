@@ -9,11 +9,41 @@ import com.google.gson.JsonSyntaxException;
 public class JsonUtils
 {
     /**
+     * Does the given JsonObject contain a string field with the given name?
+     */
+    public static boolean isString(JsonObject p_151205_0_, String p_151205_1_)
+    {
+        return !isJsonPrimitive(p_151205_0_, p_151205_1_) ? false : p_151205_0_.getAsJsonPrimitive(p_151205_1_).isString();
+    }
+
+    /**
+     * Is the given JsonElement a string?
+     */
+    public static boolean isString(JsonElement p_151211_0_)
+    {
+        return !p_151211_0_.isJsonPrimitive() ? false : p_151211_0_.getAsJsonPrimitive().isString();
+    }
+
+    public static boolean isBoolean(JsonObject p_180199_0_, String p_180199_1_)
+    {
+        return !isJsonPrimitive(p_180199_0_, p_180199_1_) ? false : p_180199_0_.getAsJsonPrimitive(p_180199_1_).isBoolean();
+    }
+
+    /**
      * Does the given JsonObject contain an array field with the given name?
      */
     public static boolean isJsonArray(JsonObject p_151202_0_, String p_151202_1_)
     {
         return !hasField(p_151202_0_, p_151202_1_) ? false : p_151202_0_.get(p_151202_1_).isJsonArray();
+    }
+
+    /**
+     * Does the given JsonObject contain a field with the given name whose type is primitive (String, Java primitive, or
+     * Java primitive wrapper)?
+     */
+    public static boolean isJsonPrimitive(JsonObject p_151201_0_, String p_151201_1_)
+    {
+        return !hasField(p_151201_0_, p_151201_1_) ? false : p_151201_0_.get(p_151201_1_).isJsonPrimitive();
     }
 
     /**
@@ -56,6 +86,15 @@ public class JsonUtils
     }
 
     /**
+     * Gets the string value of the field on the JsonObject with the given name, or the given default value if the field
+     * is missing.
+     */
+    public static String getString(JsonObject p_151219_0_, String p_151219_1_, String p_151219_2_)
+    {
+        return p_151219_0_.has(p_151219_1_) ? getString(p_151219_0_.get(p_151219_1_), p_151219_1_) : p_151219_2_;
+    }
+
+    /**
      * Gets the boolean value of the given JsonElement.  Expects the second parameter to be the name of the element's
      * field if an error message needs to be thrown.
      */
@@ -68,6 +107,21 @@ public class JsonUtils
         else
         {
             throw new JsonSyntaxException("Expected " + p_151216_1_ + " to be a Boolean, was " + toString(p_151216_0_));
+        }
+    }
+
+    /**
+     * Gets the boolean value of the field on the JsonObject with the given name.
+     */
+    public static boolean getBoolean(JsonObject p_151212_0_, String p_151212_1_)
+    {
+        if (p_151212_0_.has(p_151212_1_))
+        {
+            return getBoolean(p_151212_0_.get(p_151212_1_), p_151212_1_);
+        }
+        else
+        {
+            throw new JsonSyntaxException("Missing " + p_151212_1_ + ", expected to find a Boolean");
         }
     }
 
@@ -93,6 +147,21 @@ public class JsonUtils
         else
         {
             throw new JsonSyntaxException("Expected " + p_151220_1_ + " to be a Float, was " + toString(p_151220_0_));
+        }
+    }
+
+    /**
+     * Gets the float value of the field on the JsonObject with the given name.
+     */
+    public static float getFloat(JsonObject p_151217_0_, String p_151217_1_)
+    {
+        if (p_151217_0_.has(p_151217_1_))
+        {
+            return getFloat(p_151217_0_.get(p_151217_1_), p_151217_1_);
+        }
+        else
+        {
+            throw new JsonSyntaxException("Missing " + p_151217_1_ + ", expected to find a Float");
         }
     }
 
@@ -161,6 +230,27 @@ public class JsonUtils
         }
     }
 
+    public static JsonObject getJsonObject(JsonObject base, String key)
+    {
+        if (base.has(key))
+        {
+            return getJsonObject(base.get(key), key);
+        }
+        else
+        {
+            throw new JsonSyntaxException("Missing " + key + ", expected to find a JsonObject");
+        }
+    }
+
+    /**
+     * Gets the JsonObject field on the JsonObject with the given name, or the given default value if the field is
+     * missing.
+     */
+    public static JsonObject getJsonObject(JsonObject p_151218_0_, String p_151218_1_, JsonObject p_151218_2_)
+    {
+        return p_151218_0_.has(p_151218_1_) ? getJsonObject(p_151218_0_.get(p_151218_1_), p_151218_1_) : p_151218_2_;
+    }
+
     /**
      * Gets the given JsonElement as a JsonArray.  Expects the second parameter to be the name of the element's field if
      * an error message needs to be thrown.
@@ -190,6 +280,15 @@ public class JsonUtils
         {
             throw new JsonSyntaxException("Missing " + p_151214_1_ + ", expected to find a JsonArray");
         }
+    }
+
+    /**
+     * Gets the JsonArray field on the JsonObject with the given name, or the given default value if the field is
+     * missing.
+     */
+    public static JsonArray getJsonArray(JsonObject p_151213_0_, String p_151213_1_, JsonArray p_151213_2_)
+    {
+        return p_151213_0_.has(p_151213_1_) ? getJsonArray(p_151213_0_.get(p_151213_1_), p_151213_1_) : p_151213_2_;
     }
 
     /**

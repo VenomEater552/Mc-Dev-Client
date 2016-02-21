@@ -1,7 +1,9 @@
 package net.minecraft.item;
 
 import com.google.common.collect.Maps;
+import java.util.List;
 import java.util.Map;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -48,6 +50,20 @@ public class ItemFishFood extends ItemFood
         }
 
         super.onFoodEaten(stack, worldIn, player);
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        for (ItemFishFood.FishType itemfishfood$fishtype : ItemFishFood.FishType.values())
+        {
+            if (!this.cooked || itemfishfood$fishtype.canCook())
+            {
+                subItems.add(new ItemStack(this, 1, itemfishfood$fishtype.getMetadata()));
+            }
+        }
     }
 
     /**

@@ -73,6 +73,19 @@ public class InventoryPlayer implements IInventory
         return -1;
     }
 
+    private int getInventorySlotContainItemAndDamage(Item itemIn, int p_146024_2_)
+    {
+        for (int i = 0; i < this.mainInventory.length; ++i)
+        {
+            if (this.mainInventory[i] != null && this.mainInventory[i].getItem() == itemIn && this.mainInventory[i].getMetadata() == p_146024_2_)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     /**
      * stores an itemstack in the users inventory
      */
@@ -103,6 +116,70 @@ public class InventoryPlayer implements IInventory
         }
 
         return -1;
+    }
+
+    public void setCurrentItem(Item itemIn, int p_146030_2_, boolean p_146030_3_, boolean p_146030_4_)
+    {
+        ItemStack itemstack = this.getCurrentItem();
+        int i = p_146030_3_ ? this.getInventorySlotContainItemAndDamage(itemIn, p_146030_2_) : this.getInventorySlotContainItem(itemIn);
+
+        if (i >= 0 && i < 9)
+        {
+            this.currentItem = i;
+        }
+        else if (p_146030_4_ && itemIn != null)
+        {
+            int j = this.getFirstEmptyStack();
+
+            if (j >= 0 && j < 9)
+            {
+                this.currentItem = j;
+            }
+
+            if (itemstack == null || !itemstack.isItemEnchantable() || this.getInventorySlotContainItemAndDamage(itemstack.getItem(), itemstack.getItemDamage()) != this.currentItem)
+            {
+                int k = this.getInventorySlotContainItemAndDamage(itemIn, p_146030_2_);
+                int l;
+
+                if (k >= 0)
+                {
+                    l = this.mainInventory[k].stackSize;
+                    this.mainInventory[k] = this.mainInventory[this.currentItem];
+                }
+                else
+                {
+                    l = 1;
+                }
+
+                this.mainInventory[this.currentItem] = new ItemStack(itemIn, l, p_146030_2_);
+            }
+        }
+    }
+
+    /**
+     * Switch the current item to the next one or the previous one
+     */
+    public void changeCurrentItem(int p_70453_1_)
+    {
+        if (p_70453_1_ > 0)
+        {
+            p_70453_1_ = 1;
+        }
+
+        if (p_70453_1_ < 0)
+        {
+            p_70453_1_ = -1;
+        }
+
+        for (this.currentItem -= p_70453_1_; this.currentItem < 0; this.currentItem += 9)
+        {
+            ;
+        }
+
+        while (this.currentItem >= 9)
+        {
+            this.currentItem -= 9;
+        }
     }
 
     /**

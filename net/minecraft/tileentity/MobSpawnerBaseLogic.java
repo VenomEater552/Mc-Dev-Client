@@ -336,6 +336,22 @@ public abstract class MobSpawnerBaseLogic
         }
     }
 
+    public Entity func_180612_a(World worldIn)
+    {
+        if (this.cachedEntity == null)
+        {
+            Entity entity = EntityList.createEntityByName(this.getEntityNameToSpawn(), worldIn);
+
+            if (entity != null)
+            {
+                entity = this.spawnNewEntity(entity, false);
+                this.cachedEntity = entity;
+            }
+        }
+
+        return this.cachedEntity;
+    }
+
     /**
      * Sets the delay to minDelay if parameter given is 1, else return false.
      */
@@ -367,6 +383,16 @@ public abstract class MobSpawnerBaseLogic
     public abstract World getSpawnerWorld();
 
     public abstract BlockPos getSpawnerPosition();
+
+    public double getMobRotation()
+    {
+        return this.mobRotation;
+    }
+
+    public double getPrevMobRotation()
+    {
+        return this.prevMobRotation;
+    }
 
     public class WeightedRandomMinecart extends WeightedRandom.Item
     {

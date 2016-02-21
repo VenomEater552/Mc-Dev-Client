@@ -86,6 +86,16 @@ public class S20PacketEntityProperties implements Packet<INetHandlerPlayClient>
         handler.handleEntityProperties(this);
     }
 
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public List<S20PacketEntityProperties.Snapshot> func_149441_d()
+    {
+        return this.field_149444_b;
+    }
+
     public class Snapshot
     {
         private final String field_151412_b;

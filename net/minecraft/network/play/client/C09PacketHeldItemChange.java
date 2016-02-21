@@ -9,6 +9,15 @@ public class C09PacketHeldItemChange implements Packet<INetHandlerPlayServer>
 {
     private int slotId;
 
+    public C09PacketHeldItemChange()
+    {
+    }
+
+    public C09PacketHeldItemChange(int slotId)
+    {
+        this.slotId = slotId;
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

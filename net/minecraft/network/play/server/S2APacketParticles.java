@@ -96,6 +96,89 @@ public class S2APacketParticles implements Packet<INetHandlerPlayClient>
         }
     }
 
+    public EnumParticleTypes getParticleType()
+    {
+        return this.particleType;
+    }
+
+    public boolean isLongDistance()
+    {
+        return this.longDistance;
+    }
+
+    /**
+     * Gets the x coordinate to spawn the particle.
+     */
+    public double getXCoordinate()
+    {
+        return (double)this.xCoord;
+    }
+
+    /**
+     * Gets the y coordinate to spawn the particle.
+     */
+    public double getYCoordinate()
+    {
+        return (double)this.yCoord;
+    }
+
+    /**
+     * Gets the z coordinate to spawn the particle.
+     */
+    public double getZCoordinate()
+    {
+        return (double)this.zCoord;
+    }
+
+    /**
+     * Gets the x coordinate offset for the particle. The particle may use the offset for particle spread.
+     */
+    public float getXOffset()
+    {
+        return this.xOffset;
+    }
+
+    /**
+     * Gets the y coordinate offset for the particle. The particle may use the offset for particle spread.
+     */
+    public float getYOffset()
+    {
+        return this.yOffset;
+    }
+
+    /**
+     * Gets the z coordinate offset for the particle. The particle may use the offset for particle spread.
+     */
+    public float getZOffset()
+    {
+        return this.zOffset;
+    }
+
+    /**
+     * Gets the speed of the particle animation (used in client side rendering).
+     */
+    public float getParticleSpeed()
+    {
+        return this.particleSpeed;
+    }
+
+    /**
+     * Gets the amount of particles to spawn
+     */
+    public int getParticleCount()
+    {
+        return this.particleCount;
+    }
+
+    /**
+     * Gets the particle arguments. Some particles rely on block and/or item ids and sometimes metadata ids to color or
+     * texture the particle.
+     */
+    public int[] getParticleArgs()
+    {
+        return this.particleArguments;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */

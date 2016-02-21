@@ -35,6 +35,12 @@ public class EntityWitherSkull extends EntityFireball
         return this.isInvulnerable() ? 0.73F : super.getMotionFactor();
     }
 
+    public EntityWitherSkull(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ)
+    {
+        super(worldIn, x, y, z, accelX, accelY, accelZ);
+        this.setSize(0.3125F, 0.3125F);
+    }
+
     /**
      * Returns true if the entity is on fire. Used by render to add the fire effect on rendering.
      */

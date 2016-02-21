@@ -104,4 +104,44 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>
     {
         handler.handleExplosion(this);
     }
+
+    public float func_149149_c()
+    {
+        return this.field_149152_f;
+    }
+
+    public float func_149144_d()
+    {
+        return this.field_149153_g;
+    }
+
+    public float func_149147_e()
+    {
+        return this.field_149159_h;
+    }
+
+    public double getX()
+    {
+        return this.posX;
+    }
+
+    public double getY()
+    {
+        return this.posY;
+    }
+
+    public double getZ()
+    {
+        return this.posZ;
+    }
+
+    public float getStrength()
+    {
+        return this.strength;
+    }
+
+    public List<BlockPos> getAffectedBlockPositions()
+    {
+        return this.affectedBlockPositions;
+    }
 }

@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -64,10 +65,20 @@ public class BlockTripWire extends Block
         return false;
     }
 
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.TRANSLUCENT;
+    }
+
     /**
      * Get the Item that this Block should drop when harvested.
      */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    {
+        return Items.string;
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
     {
         return Items.string;
     }

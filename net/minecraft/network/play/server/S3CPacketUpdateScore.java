@@ -80,6 +80,26 @@ public class S3CPacketUpdateScore implements Packet<INetHandlerPlayClient>
         handler.handleUpdateScore(this);
     }
 
+    public String getPlayerName()
+    {
+        return this.name;
+    }
+
+    public String getObjectiveName()
+    {
+        return this.objective;
+    }
+
+    public int getScoreValue()
+    {
+        return this.value;
+    }
+
+    public S3CPacketUpdateScore.Action getScoreAction()
+    {
+        return this.action;
+    }
+
     public static enum Action
     {
         CHANGE,

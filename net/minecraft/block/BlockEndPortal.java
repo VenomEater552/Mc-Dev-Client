@@ -6,10 +6,13 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -33,6 +36,11 @@ public class BlockEndPortal extends BlockContainer
     {
         float f = 0.0625F;
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
+    }
+
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return side == EnumFacing.DOWN ? super.shouldSideBeRendered(worldIn, pos, side) : false;
     }
 
     /**
@@ -72,6 +80,22 @@ public class BlockEndPortal extends BlockContainer
         {
             entityIn.travelToDimension(1);
         }
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        double d0 = (double)((float)pos.getX() + rand.nextFloat());
+        double d1 = (double)((float)pos.getY() + 0.8F);
+        double d2 = (double)((float)pos.getZ() + rand.nextFloat());
+        double d3 = 0.0D;
+        double d4 = 0.0D;
+        double d5 = 0.0D;
+        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, d3, d4, d5, new int[0]);
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return null;
     }
 
     /**

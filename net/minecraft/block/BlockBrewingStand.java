@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -126,6 +128,14 @@ public class BlockBrewingStand extends BlockContainer
         }
     }
 
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        double d0 = (double)((float)pos.getX() + 0.4F + rand.nextFloat() * 0.2F);
+        double d1 = (double)((float)pos.getY() + 0.7F + rand.nextFloat() * 0.3F);
+        double d2 = (double)((float)pos.getZ() + 0.4F + rand.nextFloat() * 0.2F);
+        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, 0.0D, 0.0D, 0.0D, new int[0]);
+    }
+
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
     {
         TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -146,6 +156,11 @@ public class BlockBrewingStand extends BlockContainer
         return Items.brewing_stand;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.brewing_stand;
+    }
+
     public boolean hasComparatorInputOverride()
     {
         return true;
@@ -154,6 +169,11 @@ public class BlockBrewingStand extends BlockContainer
     public int getComparatorInputOverride(World worldIn, BlockPos pos)
     {
         return Container.calcRedstone(worldIn.getTileEntity(pos));
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     /**

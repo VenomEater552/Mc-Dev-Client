@@ -83,6 +83,28 @@ public class ItemSlab extends ItemBlock
         }
     }
 
+    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
+    {
+        BlockPos blockpos = pos;
+        IProperty iproperty = this.singleSlab.getVariantProperty();
+        Object object = this.singleSlab.getVariant(stack);
+        IBlockState iblockstate = worldIn.getBlockState(pos);
+
+        if (iblockstate.getBlock() == this.singleSlab)
+        {
+            boolean flag = iblockstate.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP;
+
+            if ((side == EnumFacing.UP && !flag || side == EnumFacing.DOWN && flag) && object == iblockstate.getValue(iproperty))
+            {
+                return true;
+            }
+        }
+
+        pos = pos.offset(side);
+        IBlockState iblockstate1 = worldIn.getBlockState(pos);
+        return iblockstate1.getBlock() == this.singleSlab && object == iblockstate1.getValue(iproperty) ? true : super.canPlaceBlockOnSide(worldIn, blockpos, side, player, stack);
+    }
+
     private boolean tryPlace(ItemStack stack, World worldIn, BlockPos pos, Object variantInStack)
     {
         IBlockState iblockstate = worldIn.getBlockState(pos);

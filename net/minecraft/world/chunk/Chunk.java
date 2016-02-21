@@ -205,6 +205,42 @@ public class Chunk
     }
 
     /**
+     * Generates the height map for a chunk from scratch
+     */
+    protected void generateHeightMap()
+    {
+        int i = this.getTopFilledSegment();
+        this.heightMapMinimum = Integer.MAX_VALUE;
+
+        for (int j = 0; j < 16; ++j)
+        {
+            for (int k = 0; k < 16; ++k)
+            {
+                this.precipitationHeightMap[j + (k << 4)] = -999;
+
+                for (int l = i + 16; l > 0; --l)
+                {
+                    Block block = this.getBlock0(j, l - 1, k);
+
+                    if (block.getLightOpacity() != 0)
+                    {
+                        this.heightMap[k << 4 | j] = l;
+
+                        if (l < this.heightMapMinimum)
+                        {
+                            this.heightMapMinimum = l;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        this.isModified = true;
+    }
+
+    /**
      * Generates the initial skylight map for the chunk upon generation or load.
      */
     public void generateSkylightMap()
@@ -1265,6 +1301,84 @@ public class Chunk
         }
     }
 
+    /**
+     * Initialize this chunk with new binary data.
+     */
+    public void fillChunk(byte[] p_177439_1_, int p_177439_2_, boolean p_177439_3_)
+    {
+        int i = 0;
+        boolean flag = !this.worldObj.provider.getHasNoSky();
+
+        for (int j = 0; j < this.storageArrays.length; ++j)
+        {
+            if ((p_177439_2_ & 1 << j) != 0)
+            {
+                if (this.storageArrays[j] == null)
+                {
+                    this.storageArrays[j] = new ExtendedBlockStorage(j << 4, flag);
+                }
+
+                char[] achar = this.storageArrays[j].getData();
+
+                for (int k = 0; k < achar.length; ++k)
+                {
+                    achar[k] = (char)((p_177439_1_[i + 1] & 255) << 8 | p_177439_1_[i] & 255);
+                    i += 2;
+                }
+            }
+            else if (p_177439_3_ && this.storageArrays[j] != null)
+            {
+                this.storageArrays[j] = null;
+            }
+        }
+
+        for (int l = 0; l < this.storageArrays.length; ++l)
+        {
+            if ((p_177439_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
+            {
+                NibbleArray nibblearray = this.storageArrays[l].getBlocklightArray();
+                System.arraycopy(p_177439_1_, i, nibblearray.getData(), 0, nibblearray.getData().length);
+                i += nibblearray.getData().length;
+            }
+        }
+
+        if (flag)
+        {
+            for (int i1 = 0; i1 < this.storageArrays.length; ++i1)
+            {
+                if ((p_177439_2_ & 1 << i1) != 0 && this.storageArrays[i1] != null)
+                {
+                    NibbleArray nibblearray1 = this.storageArrays[i1].getSkylightArray();
+                    System.arraycopy(p_177439_1_, i, nibblearray1.getData(), 0, nibblearray1.getData().length);
+                    i += nibblearray1.getData().length;
+                }
+            }
+        }
+
+        if (p_177439_3_)
+        {
+            System.arraycopy(p_177439_1_, i, this.blockBiomeArray, 0, this.blockBiomeArray.length);
+            int k1 = i + this.blockBiomeArray.length;
+        }
+
+        for (int j1 = 0; j1 < this.storageArrays.length; ++j1)
+        {
+            if (this.storageArrays[j1] != null && (p_177439_2_ & 1 << j1) != 0)
+            {
+                this.storageArrays[j1].removeInvalidBlocks();
+            }
+        }
+
+        this.isLightPopulated = true;
+        this.isTerrainPopulated = true;
+        this.generateHeightMap();
+
+        for (TileEntity tileentity : this.chunkTileEntityMap.values())
+        {
+            tileentity.updateContainingBlockInfo();
+        }
+    }
+
     public BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager)
     {
         int i = pos.getX() & 15;
@@ -1491,6 +1605,11 @@ public class Chunk
     public boolean isLoaded()
     {
         return this.isChunkLoaded;
+    }
+
+    public void setChunkLoaded(boolean loaded)
+    {
+        this.isChunkLoaded = loaded;
     }
 
     public World getWorld()

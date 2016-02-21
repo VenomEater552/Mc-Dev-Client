@@ -166,6 +166,12 @@ public class ScorePlayerTeam extends Team
         return i;
     }
 
+    public void func_98298_a(int p_98298_1_)
+    {
+        this.setAllowFriendlyFire((p_98298_1_ & 1) > 0);
+        this.setSeeFriendlyInvisiblesEnabled((p_98298_1_ & 2) > 0);
+    }
+
     public void setChatFormat(EnumChatFormatting p_178774_1_)
     {
         this.chatFormat = p_178774_1_;

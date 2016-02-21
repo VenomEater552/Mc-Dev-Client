@@ -115,6 +115,14 @@ public class WorldChunkManager
     }
 
     /**
+     * Return an adjusted version of a given temperature based on the y height
+     */
+    public float getTemperatureAtHeight(float p_76939_1_, int p_76939_2_)
+    {
+        return p_76939_1_;
+    }
+
+    /**
      * Returns an array of biomes for the location input.
      */
     public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] biomes, int x, int z, int width, int height)

@@ -124,6 +124,11 @@ public class BlockSkull extends BlockContainer
         return new TileEntitySkull();
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.skull;
+    }
+
     public int getDamageValue(World worldIn, BlockPos pos)
     {
         TileEntity tileentity = worldIn.getTileEntity(pos);

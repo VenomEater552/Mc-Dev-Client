@@ -26,6 +26,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -211,6 +212,14 @@ public abstract class World implements IBlockAccess
     public void initialize(WorldSettings settings)
     {
         this.worldInfo.setServerInitialized(true);
+    }
+
+    /**
+     * Sets a new spawn location by finding an uncovered block at a random (x,z) location in the chunk.
+     */
+    public void setInitialSpawnLocation()
+    {
+        this.setSpawnPoint(new BlockPos(8, 64, 8));
     }
 
     public Block getGroundAboveSeaLevel(BlockPos pos)
@@ -718,6 +727,65 @@ public abstract class World implements IBlockAccess
         }
     }
 
+    public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos)
+    {
+        if (this.provider.getHasNoSky() && type == EnumSkyBlock.SKY)
+        {
+            return 0;
+        }
+        else
+        {
+            if (pos.getY() < 0)
+            {
+                pos = new BlockPos(pos.getX(), 0, pos.getZ());
+            }
+
+            if (!this.isValid(pos))
+            {
+                return type.defaultLightValue;
+            }
+            else if (!this.isBlockLoaded(pos))
+            {
+                return type.defaultLightValue;
+            }
+            else if (this.getBlockState(pos).getBlock().getUseNeighborBrightness())
+            {
+                int i1 = this.getLightFor(type, pos.up());
+                int i = this.getLightFor(type, pos.east());
+                int j = this.getLightFor(type, pos.west());
+                int k = this.getLightFor(type, pos.south());
+                int l = this.getLightFor(type, pos.north());
+
+                if (i > i1)
+                {
+                    i1 = i;
+                }
+
+                if (j > i1)
+                {
+                    i1 = j;
+                }
+
+                if (k > i1)
+                {
+                    i1 = k;
+                }
+
+                if (l > i1)
+                {
+                    i1 = l;
+                }
+
+                return i1;
+            }
+            else
+            {
+                Chunk chunk = this.getChunkFromBlockCoords(pos);
+                return chunk.getLightFor(type, pos);
+            }
+        }
+    }
+
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
         if (pos.getY() < 0)
@@ -759,6 +827,19 @@ public abstract class World implements IBlockAccess
         {
             ((IWorldAccess)this.worldAccesses.get(i)).notifyLightSet(pos);
         }
+    }
+
+    public int getCombinedLight(BlockPos pos, int lightValue)
+    {
+        int i = this.getLightFromNeighborsFor(EnumSkyBlock.SKY, pos);
+        int j = this.getLightFromNeighborsFor(EnumSkyBlock.BLOCK, pos);
+
+        if (j < lightValue)
+        {
+            j = lightValue;
+        }
+
+        return i << 20 | j << 4;
     }
 
     public float getLightBrightness(BlockPos pos)
@@ -1040,6 +1121,11 @@ public abstract class World implements IBlockAccess
         this.spawnParticle(particleType.getParticleID(), particleType.getShouldIgnoreRange(), xCoord, yCoord, zCoord, xOffset, yOffset, zOffset, p_175688_14_);
     }
 
+    public void spawnParticle(EnumParticleTypes particleType, boolean p_175682_2_, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int... p_175682_15_)
+    {
+        this.spawnParticle(particleType.getParticleID(), particleType.getShouldIgnoreRange() | p_175682_2_, xCoord, yCoord, zCoord, xOffset, yOffset, zOffset, p_175682_15_);
+    }
+
     private void spawnParticle(int particleID, boolean p_175720_2_, double xCood, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int... p_175720_15_)
     {
         for (int i = 0; i < this.worldAccesses.size(); ++i)
@@ -1163,6 +1249,14 @@ public abstract class World implements IBlockAccess
     public void addWorldAccess(IWorldAccess worldAccess)
     {
         this.worldAccesses.add(worldAccess);
+    }
+
+    /**
+     * Removes a worldAccess from the worldAccesses object
+     */
+    public void removeWorldAccess(IWorldAccess worldAccess)
+    {
+        this.worldAccesses.remove(worldAccess);
     }
 
     public List<AxisAlignedBB> getCollidingBoundingBoxes(Entity entityIn, AxisAlignedBB bb)
@@ -1319,11 +1413,91 @@ public abstract class World implements IBlockAccess
     }
 
     /**
+     * Returns the sun brightness - checks time of day, rain and thunder
+     */
+    public float getSunBrightness(float p_72971_1_)
+    {
+        float f = this.getCelestialAngle(p_72971_1_);
+        float f1 = 1.0F - (MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+        f1 = 1.0F - f1;
+        f1 = (float)((double)f1 * (1.0D - (double)(this.getRainStrength(p_72971_1_) * 5.0F) / 16.0D));
+        f1 = (float)((double)f1 * (1.0D - (double)(this.getThunderStrength(p_72971_1_) * 5.0F) / 16.0D));
+        return f1 * 0.8F + 0.2F;
+    }
+
+    /**
+     * Calculates the color for the skybox
+     */
+    public Vec3 getSkyColor(Entity entityIn, float partialTicks)
+    {
+        float f = this.getCelestialAngle(partialTicks);
+        float f1 = MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+        int i = MathHelper.floor_double(entityIn.posX);
+        int j = MathHelper.floor_double(entityIn.posY);
+        int k = MathHelper.floor_double(entityIn.posZ);
+        BlockPos blockpos = new BlockPos(i, j, k);
+        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(blockpos);
+        float f2 = biomegenbase.getFloatTemperature(blockpos);
+        int l = biomegenbase.getSkyColorByTemp(f2);
+        float f3 = (float)(l >> 16 & 255) / 255.0F;
+        float f4 = (float)(l >> 8 & 255) / 255.0F;
+        float f5 = (float)(l & 255) / 255.0F;
+        f3 = f3 * f1;
+        f4 = f4 * f1;
+        f5 = f5 * f1;
+        float f6 = this.getRainStrength(partialTicks);
+
+        if (f6 > 0.0F)
+        {
+            float f7 = (f3 * 0.3F + f4 * 0.59F + f5 * 0.11F) * 0.6F;
+            float f8 = 1.0F - f6 * 0.75F;
+            f3 = f3 * f8 + f7 * (1.0F - f8);
+            f4 = f4 * f8 + f7 * (1.0F - f8);
+            f5 = f5 * f8 + f7 * (1.0F - f8);
+        }
+
+        float f10 = this.getThunderStrength(partialTicks);
+
+        if (f10 > 0.0F)
+        {
+            float f11 = (f3 * 0.3F + f4 * 0.59F + f5 * 0.11F) * 0.2F;
+            float f9 = 1.0F - f10 * 0.75F;
+            f3 = f3 * f9 + f11 * (1.0F - f9);
+            f4 = f4 * f9 + f11 * (1.0F - f9);
+            f5 = f5 * f9 + f11 * (1.0F - f9);
+        }
+
+        if (this.lastLightningBolt > 0)
+        {
+            float f12 = (float)this.lastLightningBolt - partialTicks;
+
+            if (f12 > 1.0F)
+            {
+                f12 = 1.0F;
+            }
+
+            f12 = f12 * 0.45F;
+            f3 = f3 * (1.0F - f12) + 0.8F * f12;
+            f4 = f4 * (1.0F - f12) + 0.8F * f12;
+            f5 = f5 * (1.0F - f12) + 1.0F * f12;
+        }
+
+        return new Vec3((double)f3, (double)f4, (double)f5);
+    }
+
+    /**
      * calls calculateCelestialAngle
      */
     public float getCelestialAngle(float partialTicks)
     {
         return this.provider.calculateCelestialAngle(this.worldInfo.getWorldTime(), partialTicks);
+    }
+
+    public int getMoonPhase()
+    {
+        return this.provider.getMoonPhase(this.worldInfo.getWorldTime());
     }
 
     /**
@@ -1341,6 +1515,51 @@ public abstract class World implements IBlockAccess
     {
         float f = this.getCelestialAngle(partialTicks);
         return f * (float)Math.PI * 2.0F;
+    }
+
+    public Vec3 getCloudColour(float partialTicks)
+    {
+        float f = this.getCelestialAngle(partialTicks);
+        float f1 = MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+        float f2 = (float)(this.cloudColour >> 16 & 255L) / 255.0F;
+        float f3 = (float)(this.cloudColour >> 8 & 255L) / 255.0F;
+        float f4 = (float)(this.cloudColour & 255L) / 255.0F;
+        float f5 = this.getRainStrength(partialTicks);
+
+        if (f5 > 0.0F)
+        {
+            float f6 = (f2 * 0.3F + f3 * 0.59F + f4 * 0.11F) * 0.6F;
+            float f7 = 1.0F - f5 * 0.95F;
+            f2 = f2 * f7 + f6 * (1.0F - f7);
+            f3 = f3 * f7 + f6 * (1.0F - f7);
+            f4 = f4 * f7 + f6 * (1.0F - f7);
+        }
+
+        f2 = f2 * (f1 * 0.9F + 0.1F);
+        f3 = f3 * (f1 * 0.9F + 0.1F);
+        f4 = f4 * (f1 * 0.85F + 0.15F);
+        float f9 = this.getThunderStrength(partialTicks);
+
+        if (f9 > 0.0F)
+        {
+            float f10 = (f2 * 0.3F + f3 * 0.59F + f4 * 0.11F) * 0.2F;
+            float f8 = 1.0F - f9 * 0.95F;
+            f2 = f2 * f8 + f10 * (1.0F - f8);
+            f3 = f3 * f8 + f10 * (1.0F - f8);
+            f4 = f4 * f8 + f10 * (1.0F - f8);
+        }
+
+        return new Vec3((double)f2, (double)f3, (double)f4);
+    }
+
+    /**
+     * Returns vector(ish) with R/G/B for fog
+     */
+    public Vec3 getFogColor(float partialTicks)
+    {
+        float f = this.getCelestialAngle(partialTicks);
+        return this.provider.getFogColor(f, partialTicks);
     }
 
     public BlockPos getPrecipitationHeight(BlockPos pos)
@@ -1369,6 +1588,17 @@ public abstract class World implements IBlockAccess
         }
 
         return blockpos;
+    }
+
+    /**
+     * How bright are stars in the sky
+     */
+    public float getStarBrightness(float partialTicks)
+    {
+        float f = this.getCelestialAngle(partialTicks);
+        float f1 = 1.0F - (MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+        return f1 * f1 * 0.5F;
     }
 
     public void scheduleUpdate(BlockPos pos, Block blockIn, int delay)
@@ -2054,6 +2284,22 @@ public abstract class World implements IBlockAccess
         {
             return false;
         }
+    }
+
+    /**
+     * This string is 'All: (number of loaded entities)' Viewable by press ing F3
+     */
+    public String getDebugLoadedEntities()
+    {
+        return "All: " + this.loadedEntityList.size();
+    }
+
+    /**
+     * Returns the name of the current chunk provider, by calling chunkprovider.makeString()
+     */
+    public String getProviderName()
+    {
+        return this.chunkProvider.makeString();
     }
 
     public TileEntity getTileEntity(BlockPos pos)
@@ -2858,6 +3104,11 @@ public abstract class World implements IBlockAccess
         return (Entity)this.entitiesById.lookup(id);
     }
 
+    public List<Entity> getLoadedEntityList()
+    {
+        return this.loadedEntityList;
+    }
+
     public void markChunkDirty(BlockPos pos, TileEntity unusedTileEntity)
     {
         if (this.isBlockLoaded(pos))
@@ -3116,11 +3367,23 @@ public abstract class World implements IBlockAccess
     }
 
     /**
+     * If on MP, sends a quitting packet.
+     */
+    public void sendQuittingDisconnectingPacket()
+    {
+    }
+
+    /**
      * Checks whether the session lock file was modified by another process
      */
     public void checkSessionLock() throws MinecraftException
     {
         this.saveHandler.checkSessionLock();
+    }
+
+    public void setTotalWorldTime(long worldTime)
+    {
+        this.worldInfo.setWorldTotalTime(worldTime);
     }
 
     /**
@@ -3167,6 +3430,29 @@ public abstract class World implements IBlockAccess
     public void setSpawnPoint(BlockPos pos)
     {
         this.worldInfo.setSpawn(pos);
+    }
+
+    /**
+     * spwans an entity and loads surrounding chunks
+     */
+    public void joinEntityInSurroundings(Entity entityIn)
+    {
+        int i = MathHelper.floor_double(entityIn.posX / 16.0D);
+        int j = MathHelper.floor_double(entityIn.posZ / 16.0D);
+        int k = 2;
+
+        for (int l = i - k; l <= i + k; ++l)
+        {
+            for (int i1 = j - k; i1 <= j + k; ++i1)
+            {
+                this.getChunkFromChunkCoords(l, i1);
+            }
+        }
+
+        if (!this.loadedEntityList.contains(entityIn))
+        {
+            this.loadedEntityList.add(entityIn);
+        }
     }
 
     public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
@@ -3231,11 +3517,29 @@ public abstract class World implements IBlockAccess
     }
 
     /**
+     * Sets the strength of the thunder.
+     */
+    public void setThunderStrength(float strength)
+    {
+        this.prevThunderingStrength = strength;
+        this.thunderingStrength = strength;
+    }
+
+    /**
      * Returns rain strength.
      */
     public float getRainStrength(float delta)
     {
         return this.prevRainingStrength + (this.rainingStrength - this.prevRainingStrength) * delta;
+    }
+
+    /**
+     * Sets the strength of the rain.
+     */
+    public void setRainStrength(float strength)
+    {
+        this.prevRainingStrength = strength;
+        this.rainingStrength = strength;
     }
 
     /**
@@ -3379,6 +3683,22 @@ public abstract class World implements IBlockAccess
     }
 
     /**
+     * set by !chunk.getAreLevelsEmpty
+     */
+    public boolean extendedLevelsInChunkCache()
+    {
+        return false;
+    }
+
+    /**
+     * Returns horizon height for use in rendering the sky.
+     */
+    public double getHorizon()
+    {
+        return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
+    }
+
+    /**
      * Adds some basic stats of the world to the given crash report.
      */
     public CrashReportCategory addWorldInfoToCrashReport(CrashReport report)
@@ -3432,6 +3752,10 @@ public abstract class World implements IBlockAccess
         }
 
         return this.theCalendar;
+    }
+
+    public void makeFireworks(double x, double y, double z, double motionX, double motionY, double motionZ, NBTTagCompound compund)
+    {
     }
 
     public Scoreboard getScoreboard()
@@ -3494,6 +3818,11 @@ public abstract class World implements IBlockAccess
     public void setSkylightSubtracted(int newSkylightSubtracted)
     {
         this.skylightSubtracted = newSkylightSubtracted;
+    }
+
+    public int getLastLightningBolt()
+    {
+        return this.lastLightningBolt;
     }
 
     public void setLastLightningBolt(int lastLightningBoltIn)

@@ -276,6 +276,11 @@ public class BlockPistonMoving extends BlockContainer
         return tileentity instanceof TileEntityPiston ? (TileEntityPiston)tileentity : null;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return null;
+    }
+
     /**
      * Convert the given metadata into a BlockState for this Block
      */

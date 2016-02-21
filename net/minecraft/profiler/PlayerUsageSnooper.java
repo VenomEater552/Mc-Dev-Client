@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.Map.Entry;
 import net.minecraft.util.HttpUtil;
 
 public class PlayerUsageSnooper
@@ -138,6 +139,28 @@ public class PlayerUsageSnooper
         }
     }
 
+    public Map<String, String> getCurrentStats()
+    {
+        Map<String, String> map = Maps.<String, String>newLinkedHashMap();
+
+        synchronized (this.syncLock)
+        {
+            this.addMemoryStatsToSnooper();
+
+            for (Entry<String, Object> entry : this.field_152773_a.entrySet())
+            {
+                map.put(entry.getKey(), entry.getValue().toString());
+            }
+
+            for (Entry<String, Object> entry1 : this.field_152774_b.entrySet())
+            {
+                map.put(entry1.getKey(), entry1.getValue().toString());
+            }
+
+            return map;
+        }
+    }
+
     public boolean isSnooperRunning()
     {
         return this.isRunning;
@@ -146,6 +169,11 @@ public class PlayerUsageSnooper
     public void stopSnooper()
     {
         this.threadTrigger.cancel();
+    }
+
+    public String getUniqueID()
+    {
+        return this.uniqueID;
     }
 
     /**

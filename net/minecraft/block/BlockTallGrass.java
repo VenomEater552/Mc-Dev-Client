@@ -1,11 +1,13 @@
 package net.minecraft.block;
 
+import java.util.List;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -15,6 +17,8 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.ColorizerGrass;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockTallGrass extends BlockBush implements IGrowable
@@ -29,6 +33,11 @@ public class BlockTallGrass extends BlockBush implements IGrowable
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 0.8F, 0.5F + f);
     }
 
+    public int getBlockColor()
+    {
+        return ColorizerGrass.getGrassColor(0.5D, 1.0D);
+    }
+
     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
     {
         return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
@@ -40,6 +49,24 @@ public class BlockTallGrass extends BlockBush implements IGrowable
     public boolean isReplaceable(World worldIn, BlockPos pos)
     {
         return true;
+    }
+
+    public int getRenderColor(IBlockState state)
+    {
+        if (state.getBlock() != this)
+        {
+            return super.getRenderColor(state);
+        }
+        else
+        {
+            BlockTallGrass.EnumType blocktallgrass$enumtype = (BlockTallGrass.EnumType)state.getValue(TYPE);
+            return blocktallgrass$enumtype == BlockTallGrass.EnumType.DEAD_BUSH ? 16777215 : ColorizerGrass.getGrassColor(0.5D, 1.0D);
+        }
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return worldIn.getBiomeGenForCoords(pos).getGrassColorAtPos(pos);
     }
 
     /**
@@ -75,6 +102,17 @@ public class BlockTallGrass extends BlockBush implements IGrowable
     {
         IBlockState iblockstate = worldIn.getBlockState(pos);
         return iblockstate.getBlock().getMetaFromState(iblockstate);
+    }
+
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        for (int i = 1; i < 3; ++i)
+        {
+            list.add(new ItemStack(itemIn, 1, i));
+        }
     }
 
     /**
@@ -124,6 +162,14 @@ public class BlockTallGrass extends BlockBush implements IGrowable
     protected BlockState createBlockState()
     {
         return new BlockState(this, new IProperty[] {TYPE});
+    }
+
+    /**
+     * Get the OffsetType for this Block. Determines if the model is rendered slightly offset.
+     */
+    public Block.EnumOffsetType getOffsetType()
+    {
+        return Block.EnumOffsetType.XYZ;
     }
 
     public static enum EnumType implements IStringSerializable

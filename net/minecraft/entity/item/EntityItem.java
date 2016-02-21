@@ -500,6 +500,11 @@ public class EntityItem extends Entity
         this.thrower = thrower;
     }
 
+    public int getAge()
+    {
+        return this.age;
+    }
+
     public void setDefaultPickupDelay()
     {
         this.delayBeforeCanPickup = 10;

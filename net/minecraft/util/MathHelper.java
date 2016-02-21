@@ -60,6 +60,14 @@ public class MathHelper
     }
 
     /**
+     * returns par0 cast as an int, and no greater than Integer.MAX_VALUE-1024
+     */
+    public static int truncateDoubleToInt(double value)
+    {
+        return (int)(value + 1024.0D) - 1024;
+    }
+
+    /**
      * Returns the greatest integer less than or equal to the double argument
      */
     public static int floor_double(double value)
@@ -75,6 +83,11 @@ public class MathHelper
     {
         long i = (long)value;
         return value < (double)i ? i - 1L : i;
+    }
+
+    public static int func_154353_e(double value)
+    {
+        return (int)(value >= 0.0D ? value : -value + 1.0D);
     }
 
     public static float abs(float value)
@@ -148,6 +161,14 @@ public class MathHelper
         return p_76132_0_ > p_76132_2_ ? p_76132_0_ : p_76132_2_;
     }
 
+    /**
+     * Buckets an integer with specifed bucket sizes.  Args: i, bucketSize
+     */
+    public static int bucketInt(int p_76137_0_, int p_76137_1_)
+    {
+        return p_76137_0_ < 0 ? -((-p_76137_0_ - 1) / p_76137_1_) - 1 : p_76137_0_ / p_76137_1_;
+    }
+
     public static int getRandomIntegerInRange(Random p_76136_0_, int p_76136_1_, int p_76136_2_)
     {
         return p_76136_1_ >= p_76136_2_ ? p_76136_1_ : p_76136_0_.nextInt(p_76136_2_ - p_76136_1_ + 1) + p_76136_1_;
@@ -173,6 +194,16 @@ public class MathHelper
         }
 
         return (double)i / (double)values.length;
+    }
+
+    public static boolean epsilonEquals(float p_180185_0_, float p_180185_1_)
+    {
+        return abs(p_180185_1_ - p_180185_0_) < 1.0E-5F;
+    }
+
+    public static int normalizeAngle(int p_180184_0_, int p_180184_1_)
+    {
+        return (p_180184_0_ % p_180184_1_ + p_180184_1_) % p_180184_1_;
     }
 
     /**
@@ -322,6 +353,49 @@ public class MathHelper
         }
     }
 
+    public static int func_180183_b(float p_180183_0_, float p_180183_1_, float p_180183_2_)
+    {
+        return func_180181_b(floor_float(p_180183_0_ * 255.0F), floor_float(p_180183_1_ * 255.0F), floor_float(p_180183_2_ * 255.0F));
+    }
+
+    public static int func_180181_b(int p_180181_0_, int p_180181_1_, int p_180181_2_)
+    {
+        int lvt_3_1_ = (p_180181_0_ << 8) + p_180181_1_;
+        lvt_3_1_ = (lvt_3_1_ << 8) + p_180181_2_;
+        return lvt_3_1_;
+    }
+
+    public static int func_180188_d(int p_180188_0_, int p_180188_1_)
+    {
+        int i = (p_180188_0_ & 16711680) >> 16;
+        int j = (p_180188_1_ & 16711680) >> 16;
+        int k = (p_180188_0_ & 65280) >> 8;
+        int l = (p_180188_1_ & 65280) >> 8;
+        int i1 = (p_180188_0_ & 255) >> 0;
+        int j1 = (p_180188_1_ & 255) >> 0;
+        int k1 = (int)((float)i * (float)j / 255.0F);
+        int l1 = (int)((float)k * (float)l / 255.0F);
+        int i2 = (int)((float)i1 * (float)j1 / 255.0F);
+        return p_180188_0_ & -16777216 | k1 << 16 | l1 << 8 | i2;
+    }
+
+    public static double func_181162_h(double p_181162_0_)
+    {
+        return p_181162_0_ - Math.floor(p_181162_0_);
+    }
+
+    public static long getPositionRandom(Vec3i pos)
+    {
+        return getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static long getCoordinateRandom(int x, int y, int z)
+    {
+        long i = (long)(x * 3129871) ^ (long)z * 116129781L ^ (long)y;
+        i = i * i * 42317861L + i * 11L;
+        return i;
+    }
+
     public static UUID getRandomUuid(Random rand)
     {
         long i = rand.nextLong() & -61441L | 16384L;
@@ -406,6 +480,65 @@ public class MathHelper
         p_181161_0_ = Double.longBitsToDouble(i);
         p_181161_0_ = p_181161_0_ * (1.5D - d0 * p_181161_0_ * p_181161_0_);
         return p_181161_0_;
+    }
+
+    public static int func_181758_c(float p_181758_0_, float p_181758_1_, float p_181758_2_)
+    {
+        int i = (int)(p_181758_0_ * 6.0F) % 6;
+        float f = p_181758_0_ * 6.0F - (float)i;
+        float f1 = p_181758_2_ * (1.0F - p_181758_1_);
+        float f2 = p_181758_2_ * (1.0F - f * p_181758_1_);
+        float f3 = p_181758_2_ * (1.0F - (1.0F - f) * p_181758_1_);
+        float f4;
+        float f5;
+        float f6;
+
+        switch (i)
+        {
+            case 0:
+                f4 = p_181758_2_;
+                f5 = f3;
+                f6 = f1;
+                break;
+
+            case 1:
+                f4 = f2;
+                f5 = p_181758_2_;
+                f6 = f1;
+                break;
+
+            case 2:
+                f4 = f1;
+                f5 = p_181758_2_;
+                f6 = f3;
+                break;
+
+            case 3:
+                f4 = f1;
+                f5 = f2;
+                f6 = p_181758_2_;
+                break;
+
+            case 4:
+                f4 = f3;
+                f5 = f1;
+                f6 = p_181758_2_;
+                break;
+
+            case 5:
+                f4 = p_181758_2_;
+                f5 = f1;
+                f6 = f2;
+                break;
+
+            default:
+                throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + p_181758_0_ + ", " + p_181758_1_ + ", " + p_181758_2_);
+        }
+
+        int j = clamp_int((int)(f4 * 255.0F), 0, 255);
+        int k = clamp_int((int)(f5 * 255.0F), 0, 255);
+        int l = clamp_int((int)(f6 * 255.0F), 0, 255);
+        return j << 16 | k << 8 | l;
     }
 
     static

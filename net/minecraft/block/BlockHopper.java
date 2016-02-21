@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -187,6 +188,11 @@ public class BlockHopper extends BlockContainer
         return false;
     }
 
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return true;
+    }
+
     public static EnumFacing getFacing(int meta)
     {
         return EnumFacing.getFront(meta & 7);
@@ -209,6 +215,11 @@ public class BlockHopper extends BlockContainer
     public int getComparatorInputOverride(World worldIn, BlockPos pos)
     {
         return Container.calcRedstone(worldIn.getTileEntity(pos));
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT_MIPPED;
     }
 
     /**

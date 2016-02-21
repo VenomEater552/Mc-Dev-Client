@@ -60,11 +60,41 @@ public class S1DPacketEntityEffect implements Packet<INetHandlerPlayClient>
         buf.writeByte(this.hideParticles);
     }
 
+    public boolean func_149429_c()
+    {
+        return this.duration == 32767;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleEntityEffect(this);
+    }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public byte getEffectId()
+    {
+        return this.effectId;
+    }
+
+    public byte getAmplifier()
+    {
+        return this.amplifier;
+    }
+
+    public int getDuration()
+    {
+        return this.duration;
+    }
+
+    public boolean func_179707_f()
+    {
+        return this.hideParticles != 0;
     }
 }

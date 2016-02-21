@@ -46,8 +46,18 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
 
     /** Server sync counter (once per 20 ticks) */
     private int ticksSinceSync;
-    private int cachedChestType = -1;
+    private int cachedChestType;
     private String customName;
+
+    public TileEntityChest()
+    {
+        this.cachedChestType = -1;
+    }
+
+    public TileEntityChest(int chestType)
+    {
+        this.cachedChestType = chestType;
+    }
 
     /**
      * Returns the number of slots in the inventory.

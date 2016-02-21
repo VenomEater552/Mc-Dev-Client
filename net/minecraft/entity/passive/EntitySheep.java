@@ -29,6 +29,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
@@ -138,6 +139,36 @@ public class EntitySheep extends EntityAnimal
     protected Item getDropItem()
     {
         return Item.getItemFromBlock(Blocks.wool);
+    }
+
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 10)
+        {
+            this.sheepTimer = 40;
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
+    public float getHeadRotationPointY(float p_70894_1_)
+    {
+        return this.sheepTimer <= 0 ? 0.0F : (this.sheepTimer >= 4 && this.sheepTimer <= 36 ? 1.0F : (this.sheepTimer < 4 ? ((float)this.sheepTimer - p_70894_1_) / 4.0F : -((float)(this.sheepTimer - 40) - p_70894_1_) / 4.0F));
+    }
+
+    public float getHeadRotationAngleX(float p_70890_1_)
+    {
+        if (this.sheepTimer > 4 && this.sheepTimer <= 36)
+        {
+            float f = ((float)(this.sheepTimer - 4) - p_70890_1_) / 32.0F;
+            return ((float)Math.PI / 5F) + ((float)Math.PI * 7F / 100F) * MathHelper.sin(f * 28.7F);
+        }
+        else
+        {
+            return this.sheepTimer > 0 ? ((float)Math.PI / 5F) : this.rotationPitch / (180F / (float)Math.PI);
+        }
     }
 
     /**

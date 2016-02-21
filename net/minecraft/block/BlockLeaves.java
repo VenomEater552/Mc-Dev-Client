@@ -9,13 +9,20 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.world.ColorizerFoliage;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeColorHelper;
 
 public abstract class BlockLeaves extends BlockLeavesBase
 {
     public static final PropertyBool DECAYABLE = PropertyBool.create("decayable");
     public static final PropertyBool CHECK_DECAY = PropertyBool.create("check_decay");
     int[] surroundings;
+    protected int iconIndex;
+    protected boolean isTransparent;
 
     public BlockLeaves()
     {
@@ -25,6 +32,21 @@ public abstract class BlockLeaves extends BlockLeavesBase
         this.setHardness(0.2F);
         this.setLightOpacity(1);
         this.setStepSound(soundTypeGrass);
+    }
+
+    public int getBlockColor()
+    {
+        return ColorizerFoliage.getFoliageColor(0.5D, 1.0D);
+    }
+
+    public int getRenderColor(IBlockState state)
+    {
+        return ColorizerFoliage.getFoliageColorBasic();
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return BiomeColorHelper.getFoliageColorAtPos(worldIn, pos);
     }
 
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
@@ -167,6 +189,17 @@ public abstract class BlockLeaves extends BlockLeavesBase
         }
     }
 
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (worldIn.canLightningStrike(pos.up()) && !World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && rand.nextInt(15) == 1)
+        {
+            double d0 = (double)((float)pos.getX() + rand.nextFloat());
+            double d1 = (double)pos.getY() - 0.05D;
+            double d2 = (double)((float)pos.getZ() + rand.nextFloat());
+            worldIn.spawnParticle(EnumParticleTypes.DRIP_WATER, d0, d1, d2, 0.0D, 0.0D, 0.0D, new int[0]);
+        }
+    }
+
     private void destroy(World worldIn, BlockPos pos)
     {
         this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
@@ -245,6 +278,21 @@ public abstract class BlockLeaves extends BlockLeavesBase
     public boolean isOpaqueCube()
     {
         return !this.fancyGraphics;
+    }
+
+    /**
+     * Pass true to draw this block using fancy graphics, or false for fast graphics.
+     */
+    public void setGraphicsLevel(boolean fancy)
+    {
+        this.isTransparent = fancy;
+        this.fancyGraphics = fancy;
+        this.iconIndex = fancy ? 0 : 1;
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return this.isTransparent ? EnumWorldBlockLayer.CUTOUT_MIPPED : EnumWorldBlockLayer.SOLID;
     }
 
     public boolean isVisuallyOpaque()

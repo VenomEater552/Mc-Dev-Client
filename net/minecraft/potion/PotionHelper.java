@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.util.IntegerCache;
 
 public class PotionHelper
 {
@@ -123,6 +124,32 @@ public class PotionHelper
         }
 
         return true;
+    }
+
+    /**
+     * Given a potion data value, get the associated liquid color (optionally bypassing the cache)
+     */
+    public static int getLiquidColor(int dataValue, boolean bypassCache)
+    {
+        Integer integer = IntegerCache.func_181756_a(dataValue);
+
+        if (!bypassCache)
+        {
+            if (DATAVALUE_COLORS.containsKey(integer))
+            {
+                return ((Integer)DATAVALUE_COLORS.get(integer)).intValue();
+            }
+            else
+            {
+                int i = calcPotionLiquidColor(getPotionEffects(integer.intValue(), false));
+                DATAVALUE_COLORS.put(integer, Integer.valueOf(i));
+                return i;
+            }
+        }
+        else
+        {
+            return calcPotionLiquidColor(getPotionEffects(integer.intValue(), true));
+        }
     }
 
     /**

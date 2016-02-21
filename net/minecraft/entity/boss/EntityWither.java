@@ -37,7 +37,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityWither extends EntityMob implements IRangedAttackMob
+public class EntityWither extends EntityMob implements IBossDisplayData, IRangedAttackMob
 {
     private float[] field_82220_d = new float[2];
     private float[] field_82221_e = new float[2];
@@ -582,6 +582,11 @@ public class EntityWither extends EntityMob implements IRangedAttackMob
         this.entityAge = 0;
     }
 
+    public int getBrightnessForRender(float partialTicks)
+    {
+        return 15728880;
+    }
+
     public void fall(float distance, float damageMultiplier)
     {
     }
@@ -599,6 +604,16 @@ public class EntityWither extends EntityMob implements IRangedAttackMob
         this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(300.0D);
         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.6000000238418579D);
         this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(40.0D);
+    }
+
+    public float func_82207_a(int p_82207_1_)
+    {
+        return this.field_82221_e[p_82207_1_];
+    }
+
+    public float func_82210_r(int p_82210_1_)
+    {
+        return this.field_82220_d[p_82210_1_];
     }
 
     public int getInvulTime()

@@ -361,6 +361,25 @@ public class DataWatcher
         return list;
     }
 
+    public void updateWatchedObjectsFromList(List<DataWatcher.WatchableObject> p_75687_1_)
+    {
+        this.lock.writeLock().lock();
+
+        for (DataWatcher.WatchableObject datawatcher$watchableobject : p_75687_1_)
+        {
+            DataWatcher.WatchableObject datawatcher$watchableobject1 = (DataWatcher.WatchableObject)this.watchedObjects.get(Integer.valueOf(datawatcher$watchableobject.getDataValueId()));
+
+            if (datawatcher$watchableobject1 != null)
+            {
+                datawatcher$watchableobject1.setObject(datawatcher$watchableobject.getObject());
+                this.owner.onDataWatcherUpdate(datawatcher$watchableobject.getDataValueId());
+            }
+        }
+
+        this.lock.writeLock().unlock();
+        this.objectChanged = true;
+    }
+
     public boolean getIsBlank()
     {
         return this.isBlank;

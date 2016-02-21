@@ -34,6 +34,17 @@ public class BiomeGenSwamp extends BiomeGenBase
         return this.worldGeneratorSwamp;
     }
 
+    public int getGrassColorAtPos(BlockPos pos)
+    {
+        double d0 = GRASS_COLOR_NOISE.func_151601_a((double)pos.getX() * 0.0225D, (double)pos.getZ() * 0.0225D);
+        return d0 < -0.1D ? 5011004 : 6975545;
+    }
+
+    public int getFoliageColorAtPos(BlockPos pos)
+    {
+        return 6975545;
+    }
+
     public BlockFlower.EnumFlowerType pickRandomFlower(Random rand, BlockPos pos)
     {
         return BlockFlower.EnumFlowerType.BLUE_ORCHID;

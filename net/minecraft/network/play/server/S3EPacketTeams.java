@@ -139,4 +139,49 @@ public class S3EPacketTeams implements Packet<INetHandlerPlayClient>
     {
         handler.handleTeams(this);
     }
+
+    public String func_149312_c()
+    {
+        return this.field_149320_a;
+    }
+
+    public String func_149306_d()
+    {
+        return this.field_149318_b;
+    }
+
+    public String func_149311_e()
+    {
+        return this.field_149319_c;
+    }
+
+    public String func_149309_f()
+    {
+        return this.field_149316_d;
+    }
+
+    public Collection<String> func_149310_g()
+    {
+        return this.field_149317_e;
+    }
+
+    public int func_149307_h()
+    {
+        return this.field_149314_f;
+    }
+
+    public int func_149308_i()
+    {
+        return this.field_149315_g;
+    }
+
+    public int func_179813_h()
+    {
+        return this.field_179815_f;
+    }
+
+    public String func_179814_i()
+    {
+        return this.field_179816_e;
+    }
 }

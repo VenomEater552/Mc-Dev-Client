@@ -60,6 +60,16 @@ public class BiomeGenMutated extends BiomeGenBase
         return this.baseBiome.genBigTreeChance(rand);
     }
 
+    public int getFoliageColorAtPos(BlockPos pos)
+    {
+        return this.baseBiome.getFoliageColorAtPos(pos);
+    }
+
+    public int getGrassColorAtPos(BlockPos pos)
+    {
+        return this.baseBiome.getGrassColorAtPos(pos);
+    }
+
     public Class <? extends BiomeGenBase > getBiomeClass()
     {
         return this.baseBiome.getBiomeClass();

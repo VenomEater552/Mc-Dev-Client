@@ -228,6 +228,18 @@ public class EntitySquid extends EntityWaterMob
         return this.posY > 45.0D && this.posY < (double)this.worldObj.func_181545_F() && super.getCanSpawnHere();
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 19)
+        {
+            this.squidRotation = 0.0F;
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     public void func_175568_b(float randomMotionVecXIn, float randomMotionVecYIn, float randomMotionVecZIn)
     {
         this.randomMotionVecX = randomMotionVecXIn;

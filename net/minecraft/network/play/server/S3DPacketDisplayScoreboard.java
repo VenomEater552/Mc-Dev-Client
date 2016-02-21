@@ -54,4 +54,14 @@ public class S3DPacketDisplayScoreboard implements Packet<INetHandlerPlayClient>
     {
         handler.handleDisplayScoreboard(this);
     }
+
+    public int func_149371_c()
+    {
+        return this.position;
+    }
+
+    public String func_149370_d()
+    {
+        return this.scoreName;
+    }
 }

@@ -13,6 +13,11 @@ public class ItemExpBottle extends Item
         this.setCreativeTab(CreativeTabs.tabMisc);
     }
 
+    public boolean hasEffect(ItemStack stack)
+    {
+        return true;
+    }
+
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */

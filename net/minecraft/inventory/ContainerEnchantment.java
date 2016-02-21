@@ -17,31 +17,40 @@ import net.minecraft.world.World;
 public class ContainerEnchantment extends Container
 {
     /** SlotEnchantmentTable object with ItemStack to be enchanted */
-    public IInventory tableInventory = new InventoryBasic("Enchant", true, 2)
-    {
-        public int getInventoryStackLimit()
-        {
-            return 64;
-        }
-        public void markDirty()
-        {
-            super.markDirty();
-            ContainerEnchantment.this.onCraftMatrixChanged(this);
-        }
-    };
+    public IInventory tableInventory;
 
     /** current world (for bookshelf counting) */
     private World worldPointer;
     private BlockPos position;
-    private Random rand = new Random();
+    private Random rand;
     public int xpSeed;
 
     /** 3-member array storing the enchantment levels of each slot */
-    public int[] enchantLevels = new int[3];
-    public int[] field_178151_h = new int[] { -1, -1, -1};
+    public int[] enchantLevels;
+    public int[] field_178151_h;
+
+    public ContainerEnchantment(InventoryPlayer playerInv, World worldIn)
+    {
+        this(playerInv, worldIn, BlockPos.ORIGIN);
+    }
 
     public ContainerEnchantment(InventoryPlayer playerInv, World worldIn, BlockPos pos)
     {
+        this.tableInventory = new InventoryBasic("Enchant", true, 2)
+        {
+            public int getInventoryStackLimit()
+            {
+                return 64;
+            }
+            public void markDirty()
+            {
+                super.markDirty();
+                ContainerEnchantment.this.onCraftMatrixChanged(this);
+            }
+        };
+        this.rand = new Random();
+        this.enchantLevels = new int[3];
+        this.field_178151_h = new int[] { -1, -1, -1};
         this.worldPointer = worldIn;
         this.position = pos;
         this.xpSeed = playerInv.player.getXPSeed();
@@ -107,6 +116,26 @@ public class ContainerEnchantment extends Container
             icrafting.sendProgressBarUpdate(this, 4, this.field_178151_h[0]);
             icrafting.sendProgressBarUpdate(this, 5, this.field_178151_h[1]);
             icrafting.sendProgressBarUpdate(this, 6, this.field_178151_h[2]);
+        }
+    }
+
+    public void updateProgressBar(int id, int data)
+    {
+        if (id >= 0 && id <= 2)
+        {
+            this.enchantLevels[id] = data;
+        }
+        else if (id == 3)
+        {
+            this.xpSeed = data;
+        }
+        else if (id >= 4 && id <= 6)
+        {
+            this.field_178151_h[id - 4] = data;
+        }
+        else
+        {
+            super.updateProgressBar(id, data);
         }
     }
 
@@ -287,6 +316,12 @@ public class ContainerEnchantment extends Container
         }
 
         return list;
+    }
+
+    public int getLapisAmount()
+    {
+        ItemStack itemstack = this.tableInventory.getStackInSlot(1);
+        return itemstack == null ? 0 : itemstack.stackSize;
     }
 
     /**

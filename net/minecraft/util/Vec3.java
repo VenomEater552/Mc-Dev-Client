@@ -39,6 +39,14 @@ public class Vec3
     }
 
     /**
+     * Returns a new vector with the result of the specified vector minus this.
+     */
+    public Vec3 subtractReverse(Vec3 vec)
+    {
+        return new Vec3(vec.xCoord - this.xCoord, vec.yCoord - this.yCoord, vec.zCoord - this.zCoord);
+    }
+
+    /**
      * Normalizes the vector to a length of 1 (except if it is the zero vector)
      */
     public Vec3 normalize()
@@ -50,6 +58,14 @@ public class Vec3
     public double dotProduct(Vec3 vec)
     {
         return this.xCoord * vec.xCoord + this.yCoord * vec.yCoord + this.zCoord * vec.zCoord;
+    }
+
+    /**
+     * Returns a new vector with the result of this vector x the specified vector.
+     */
+    public Vec3 crossProduct(Vec3 vec)
+    {
+        return new Vec3(this.yCoord * vec.zCoord - this.zCoord * vec.yCoord, this.zCoord * vec.xCoord - this.xCoord * vec.zCoord, this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
     }
 
     public Vec3 subtract(Vec3 vec)
@@ -74,6 +90,17 @@ public class Vec3
     public Vec3 addVector(double x, double y, double z)
     {
         return new Vec3(this.xCoord + x, this.yCoord + y, this.zCoord + z);
+    }
+
+    /**
+     * Euclidean distance between this and the specified vector, returned as double.
+     */
+    public double distanceTo(Vec3 vec)
+    {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+        return (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
     }
 
     /**

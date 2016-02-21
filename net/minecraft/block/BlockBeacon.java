@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -106,6 +107,11 @@ public class BlockBeacon extends BlockContainer
             ((TileEntityBeacon)tileentity).updateBeacon();
             worldIn.addBlockEvent(pos, this, 1, 0);
         }
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     public static void updateColorAsync(final World worldIn, final BlockPos glassPos)

@@ -51,4 +51,19 @@ public class S01PacketEncryptionRequest implements Packet<INetHandlerLoginClient
     {
         handler.handleEncryptionRequest(this);
     }
+
+    public String getServerId()
+    {
+        return this.hashedServerId;
+    }
+
+    public PublicKey getPublicKey()
+    {
+        return this.publicKey;
+    }
+
+    public byte[] getVerifyToken()
+    {
+        return this.verifyToken;
+    }
 }

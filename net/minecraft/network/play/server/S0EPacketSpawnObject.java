@@ -136,6 +136,61 @@ public class S0EPacketSpawnObject implements Packet<INetHandlerPlayClient>
         handler.handleSpawnObject(this);
     }
 
+    public int getEntityID()
+    {
+        return this.entityId;
+    }
+
+    public int getX()
+    {
+        return this.x;
+    }
+
+    public int getY()
+    {
+        return this.y;
+    }
+
+    public int getZ()
+    {
+        return this.z;
+    }
+
+    public int getSpeedX()
+    {
+        return this.speedX;
+    }
+
+    public int getSpeedY()
+    {
+        return this.speedY;
+    }
+
+    public int getSpeedZ()
+    {
+        return this.speedZ;
+    }
+
+    public int getPitch()
+    {
+        return this.pitch;
+    }
+
+    public int getYaw()
+    {
+        return this.yaw;
+    }
+
+    public int getType()
+    {
+        return this.type;
+    }
+
+    public int func_149009_m()
+    {
+        return this.field_149020_k;
+    }
+
     public void setX(int newX)
     {
         this.x = newX;
@@ -164,5 +219,10 @@ public class S0EPacketSpawnObject implements Packet<INetHandlerPlayClient>
     public void setSpeedZ(int newSpeedZ)
     {
         this.speedZ = newSpeedZ;
+    }
+
+    public void func_149002_g(int p_149002_1_)
+    {
+        this.field_149020_k = p_149002_1_;
     }
 }

@@ -64,4 +64,9 @@ public class ItemLilyPad extends ItemColored
             return itemStackIn;
         }
     }
+
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        return Blocks.waterlily.getRenderColor(Blocks.waterlily.getStateFromMeta(stack.getMetadata()));
+    }
 }

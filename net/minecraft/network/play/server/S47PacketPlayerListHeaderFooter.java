@@ -45,4 +45,14 @@ public class S47PacketPlayerListHeaderFooter implements Packet<INetHandlerPlayCl
     {
         handler.handlePlayerListHeaderFooter(this);
     }
+
+    public IChatComponent getHeader()
+    {
+        return this.header;
+    }
+
+    public IChatComponent getFooter()
+    {
+        return this.footer;
+    }
 }

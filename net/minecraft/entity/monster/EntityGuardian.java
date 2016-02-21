@@ -173,6 +173,12 @@ public class EntityGuardian extends EntityMob
         }
     }
 
+    public void setElder()
+    {
+        this.setElder(true);
+        this.field_175486_bm = this.field_175485_bl = 1.0F;
+    }
+
     private void setTargetedEntity(int entityId)
     {
         this.dataWatcher.updateObject(17, Integer.valueOf(entityId));
@@ -400,6 +406,16 @@ public class EntityGuardian extends EntityMob
         }
 
         super.onLivingUpdate();
+    }
+
+    public float func_175471_a(float p_175471_1_)
+    {
+        return this.field_175484_c + (this.field_175482_b - this.field_175484_c) * p_175471_1_;
+    }
+
+    public float func_175469_o(float p_175469_1_)
+    {
+        return this.field_175486_bm + (this.field_175485_bl - this.field_175486_bm) * p_175469_1_;
     }
 
     public float func_175477_p(float p_175477_1_)

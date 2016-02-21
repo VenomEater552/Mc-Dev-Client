@@ -1,5 +1,7 @@
 package net.minecraft.item;
 
+import java.util.List;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -11,6 +13,11 @@ public class ItemAppleGold extends ItemFood
     {
         super(amount, saturation, isWolfFood);
         this.setHasSubtypes(true);
+    }
+
+    public boolean hasEffect(ItemStack stack)
+    {
+        return stack.getMetadata() > 0;
     }
 
     /**
@@ -41,5 +48,14 @@ public class ItemAppleGold extends ItemFood
         {
             super.onFoodEaten(stack, worldIn, player);
         }
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        subItems.add(new ItemStack(itemIn, 1, 0));
+        subItems.add(new ItemStack(itemIn, 1, 1));
     }
 }

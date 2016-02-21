@@ -39,6 +39,11 @@ public class EntityGhast extends EntityFlying implements IMob
         this.targetTasks.addTask(1, new EntityAIFindEntityNearestPlayer(this));
     }
 
+    public boolean isAttacking()
+    {
+        return this.dataWatcher.getWatchableObjectByte(16) != 0;
+    }
+
     public void setAttacking(boolean p_175454_1_)
     {
         this.dataWatcher.updateObject(16, Byte.valueOf((byte)(p_175454_1_ ? 1 : 0)));

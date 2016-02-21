@@ -117,6 +117,10 @@ public class ChatStyle
         {
             return this;
         }
+        public String getFormattingCode()
+        {
+            return "";
+        }
     };
 
     /**
@@ -294,6 +298,53 @@ public class ChatStyle
     {
         this.parentStyle = parent;
         return this;
+    }
+
+    /**
+     * Gets the equivalent text formatting code for this style, without the initial section sign (U+00A7) character.
+     */
+    public String getFormattingCode()
+    {
+        if (this.isEmpty())
+        {
+            return this.parentStyle != null ? this.parentStyle.getFormattingCode() : "";
+        }
+        else
+        {
+            StringBuilder stringbuilder = new StringBuilder();
+
+            if (this.getColor() != null)
+            {
+                stringbuilder.append((Object)this.getColor());
+            }
+
+            if (this.getBold())
+            {
+                stringbuilder.append((Object)EnumChatFormatting.BOLD);
+            }
+
+            if (this.getItalic())
+            {
+                stringbuilder.append((Object)EnumChatFormatting.ITALIC);
+            }
+
+            if (this.getUnderlined())
+            {
+                stringbuilder.append((Object)EnumChatFormatting.UNDERLINE);
+            }
+
+            if (this.getObfuscated())
+            {
+                stringbuilder.append((Object)EnumChatFormatting.OBFUSCATED);
+            }
+
+            if (this.getStrikethrough())
+            {
+                stringbuilder.append((Object)EnumChatFormatting.STRIKETHROUGH);
+            }
+
+            return stringbuilder.toString();
+        }
     }
 
     /**

@@ -306,6 +306,36 @@ public class WorldServer extends World implements IThreadListener
         }
     }
 
+    /**
+     * Sets a new spawn location by finding an uncovered block at a random (x,z) location in the chunk.
+     */
+    public void setInitialSpawnLocation()
+    {
+        if (this.worldInfo.getSpawnY() <= 0)
+        {
+            this.worldInfo.setSpawnY(this.func_181545_F() + 1);
+        }
+
+        int i = this.worldInfo.getSpawnX();
+        int j = this.worldInfo.getSpawnZ();
+        int k = 0;
+
+        while (this.getGroundAboveSeaLevel(new BlockPos(i, 0, j)).getMaterial() == Material.air)
+        {
+            i += this.rand.nextInt(8) - this.rand.nextInt(8);
+            j += this.rand.nextInt(8) - this.rand.nextInt(8);
+            ++k;
+
+            if (k == 10000)
+            {
+                break;
+            }
+        }
+
+        this.worldInfo.setSpawnX(i);
+        this.worldInfo.setSpawnZ(j);
+    }
+
     protected void updateBlocks()
     {
         super.updateBlocks();

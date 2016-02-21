@@ -164,6 +164,12 @@ public class BiomeGenForest extends BiomeGenBase
         super.decorate(worldIn, rand, pos);
     }
 
+    public int getGrassColorAtPos(BlockPos pos)
+    {
+        int i = super.getGrassColorAtPos(pos);
+        return this.field_150632_aF == 3 ? (i & 16711422) + 2634762 >> 1 : i;
+    }
+
     protected BiomeGenBase createMutatedBiome(final int p_180277_1_)
     {
         if (this.biomeID == BiomeGenBase.forest.biomeID)

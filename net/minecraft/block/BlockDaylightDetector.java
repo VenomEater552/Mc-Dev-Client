@@ -1,5 +1,6 @@
 package net.minecraft.block;
 
+import java.util.List;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -10,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDaylightDetector;
 import net.minecraft.util.BlockPos;
@@ -108,6 +110,11 @@ public class BlockDaylightDetector extends BlockContainer
         return Item.getItemFromBlock(Blocks.daylight_detector);
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Item.getItemFromBlock(Blocks.daylight_detector);
+    }
+
     public boolean isFullCube()
     {
         return false;
@@ -164,5 +171,16 @@ public class BlockDaylightDetector extends BlockContainer
     protected BlockState createBlockState()
     {
         return new BlockState(this, new IProperty[] {POWER});
+    }
+
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        if (!this.inverted)
+        {
+            super.getSubBlocks(itemIn, tab, list);
+        }
     }
 }

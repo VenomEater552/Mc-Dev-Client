@@ -278,6 +278,43 @@ public class EntityWolf extends EntityTameable
         }
     }
 
+    /**
+     * True if the wolf is wet
+     */
+    public boolean isWolfWet()
+    {
+        return this.isWet;
+    }
+
+    /**
+     * Used when calculating the amount of shading to apply while the wolf is wet.
+     */
+    public float getShadingWhileWet(float p_70915_1_)
+    {
+        return 0.75F + (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * p_70915_1_) / 2.0F * 0.25F;
+    }
+
+    public float getShakeAngle(float p_70923_1_, float p_70923_2_)
+    {
+        float f = (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * p_70923_1_ + p_70923_2_) / 1.8F;
+
+        if (f < 0.0F)
+        {
+            f = 0.0F;
+        }
+        else if (f > 1.0F)
+        {
+            f = 1.0F;
+        }
+
+        return MathHelper.sin(f * (float)Math.PI) * MathHelper.sin(f * (float)Math.PI * 11.0F) * 0.15F * (float)Math.PI;
+    }
+
+    public float getInterestedAngle(float p_70917_1_)
+    {
+        return (this.headRotationCourseOld + (this.headRotationCourse - this.headRotationCourseOld) * p_70917_1_) * 0.15F * (float)Math.PI;
+    }
+
     public float getEyeHeight()
     {
         return this.height * 0.8F;
@@ -437,6 +474,25 @@ public class EntityWolf extends EntityTameable
         }
 
         return super.interact(player);
+    }
+
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 8)
+        {
+            this.isShaking = true;
+            this.timeWolfIsShaking = 0.0F;
+            this.prevTimeWolfIsShaking = 0.0F;
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
+    public float getTailRotation()
+    {
+        return this.isAngry() ? 1.5393804F : (this.isTamed() ? (0.55F - (20.0F - this.dataWatcher.getWatchableObjectFloat(18)) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
     }
 
     /**

@@ -12,6 +12,16 @@ public class C12PacketUpdateSign implements Packet<INetHandlerPlayServer>
     private BlockPos pos;
     private IChatComponent[] lines;
 
+    public C12PacketUpdateSign()
+    {
+    }
+
+    public C12PacketUpdateSign(BlockPos pos, IChatComponent[] lines)
+    {
+        this.pos = pos;
+        this.lines = new IChatComponent[] {lines[0], lines[1], lines[2], lines[3]};
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

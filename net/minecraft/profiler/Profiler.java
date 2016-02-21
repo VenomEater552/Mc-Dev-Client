@@ -177,5 +177,10 @@ public class Profiler
         {
             return p_compareTo_1_.field_76332_a < this.field_76332_a ? -1 : (p_compareTo_1_.field_76332_a > this.field_76332_a ? 1 : p_compareTo_1_.field_76331_c.compareTo(this.field_76331_c));
         }
+
+        public int func_76329_a()
+        {
+            return (this.field_76331_c.hashCode() & 11184810) + 4473924;
+        }
     }
 }

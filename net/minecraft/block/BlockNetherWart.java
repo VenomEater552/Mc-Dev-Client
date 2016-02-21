@@ -97,6 +97,11 @@ public class BlockNetherWart extends BlockBush
         return 0;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.nether_wart;
+    }
+
     /**
      * Convert the given metadata into a BlockState for this Block
      */

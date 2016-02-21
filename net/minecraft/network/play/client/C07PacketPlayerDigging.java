@@ -15,6 +15,17 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>
     /** Status of the digging (started, ongoing, broken). */
     private C07PacketPlayerDigging.Action status;
 
+    public C07PacketPlayerDigging()
+    {
+    }
+
+    public C07PacketPlayerDigging(C07PacketPlayerDigging.Action statusIn, BlockPos posIn, EnumFacing facingIn)
+    {
+        this.status = statusIn;
+        this.position = posIn;
+        this.facing = facingIn;
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

@@ -61,6 +61,11 @@ public class S21PacketChunkData implements Packet<INetHandlerPlayClient>
         handler.handleChunkData(this);
     }
 
+    public byte[] func_149272_d()
+    {
+        return this.extractedData.data;
+    }
+
     protected static int func_180737_a(int p_180737_0_, boolean p_180737_1_, boolean p_180737_2_)
     {
         int i = p_180737_0_ * 2 * 16 * 16 * 16;
@@ -126,6 +131,26 @@ public class S21PacketChunkData implements Packet<INetHandlerPlayClient>
     {
         System.arraycopy(p_179757_0_, 0, p_179757_1_, p_179757_2_, p_179757_0_.length);
         return p_179757_2_ + p_179757_0_.length;
+    }
+
+    public int getChunkX()
+    {
+        return this.chunkX;
+    }
+
+    public int getChunkZ()
+    {
+        return this.chunkZ;
+    }
+
+    public int getExtractedSize()
+    {
+        return this.extractedData.dataSize;
+    }
+
+    public boolean func_149274_i()
+    {
+        return this.field_149279_g;
     }
 
     public static class Extracted

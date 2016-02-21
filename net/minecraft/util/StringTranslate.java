@@ -70,6 +70,16 @@ public class StringTranslate
     }
 
     /**
+     * Replaces all the current instance's translations with the ones that are passed in.
+     */
+    public static synchronized void replaceWith(Map<String, String> p_135063_0_)
+    {
+        instance.languageList.clear();
+        instance.languageList.putAll(p_135063_0_);
+        instance.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
+    }
+
+    /**
      * Translate a key to current language.
      */
     public synchronized String translateKey(String key)

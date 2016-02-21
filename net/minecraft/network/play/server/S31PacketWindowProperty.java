@@ -20,6 +20,7 @@ public class S31PacketWindowProperty implements Packet<INetHandlerPlayClient>
         this.windowId = windowIdIn;
         this.varIndex = varIndexIn;
         this.varValue = varValueIn;
+        System.out.println(varValue);
     }
 
     /**
@@ -48,5 +49,20 @@ public class S31PacketWindowProperty implements Packet<INetHandlerPlayClient>
         buf.writeByte(this.windowId);
         buf.writeShort(this.varIndex);
         buf.writeShort(this.varValue);
+    }
+
+    public int getWindowId()
+    {
+        return this.windowId;
+    }
+
+    public int getVarIndex()
+    {
+        return this.varIndex;
+    }
+
+    public int getVarValue()
+    {
+        return this.varValue;
     }
 }

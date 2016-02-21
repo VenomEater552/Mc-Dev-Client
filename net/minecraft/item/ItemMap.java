@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockStone;
@@ -25,6 +26,20 @@ public class ItemMap extends ItemMapBase
     protected ItemMap()
     {
         this.setHasSubtypes(true);
+    }
+
+    public static MapData loadMapData(int mapId, World worldIn)
+    {
+        String s = "map_" + mapId;
+        MapData mapdata = (MapData)worldIn.loadItemData(MapData.class, s);
+
+        if (mapdata == null)
+        {
+            mapdata = new MapData(s);
+            worldIn.setItemData(s, mapdata);
+        }
+
+        return mapdata;
     }
 
     public MapData getMapData(ItemStack stack, World worldIn)
@@ -262,6 +277,27 @@ public class ItemMap extends ItemMapBase
             mapdata1.dimension = mapdata.dimension;
             mapdata1.markDirty();
             worldIn.setItemData("map_" + stack.getMetadata(), mapdata1);
+        }
+    }
+
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     */
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        MapData mapdata = this.getMapData(stack, playerIn.worldObj);
+
+        if (advanced)
+        {
+            if (mapdata == null)
+            {
+                tooltip.add("Unknown map");
+            }
+            else
+            {
+                tooltip.add("Scaling at 1:" + (1 << mapdata.scale));
+                tooltip.add("(Level " + mapdata.scale + "/" + 4 + ")");
+            }
         }
     }
 }

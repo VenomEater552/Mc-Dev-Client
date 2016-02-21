@@ -239,6 +239,15 @@ public class EntityList
     }
 
     /**
+     * Returns the ID assigned to it's string representation
+     */
+    public static int getIDFromString(String entityName)
+    {
+        Integer integer = (Integer)stringToIDMapping.get(entityName);
+        return integer == null ? 90 : integer.intValue();
+    }
+
+    /**
      * Finds the class using IDtoClassMapping and classToStringMapping
      */
     public static String getStringFromID(int entityID)

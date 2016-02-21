@@ -919,11 +919,6 @@ public abstract class ServerConfigurationManager
         return this.mcServer.worldServers[0].getSaveHandler().getPlayerNBTManager().getAvailablePlayerDat();
     }
 
-    public boolean isWhiteListEnabled()
-    {
-        return this.whiteListEnforced;
-    }
-
     public void setWhiteListEnabled(boolean whitelistEnabled)
     {
         this.whiteListEnforced = whitelistEnabled;
@@ -965,6 +960,11 @@ public abstract class ServerConfigurationManager
         return null;
     }
 
+    public void setGameType(WorldSettings.GameType p_152604_1_)
+    {
+        this.gameType = p_152604_1_;
+    }
+
     private void setPlayerGameTypeBasedOnOther(EntityPlayerMP p_72381_1_, EntityPlayerMP p_72381_2_, World worldIn)
     {
         if (p_72381_2_ != null)
@@ -977,6 +977,14 @@ public abstract class ServerConfigurationManager
         }
 
         p_72381_1_.theItemInWorldManager.initializeGameType(worldIn.getWorldInfo().getGameType());
+    }
+
+    /**
+     * Sets whether all players are allowed to use commands (cheats) on the server.
+     */
+    public void setCommandsAllowedForAll(boolean p_72387_1_)
+    {
+        this.commandsAllowedForAll = p_72387_1_;
     }
 
     /**

@@ -63,6 +63,23 @@ public class EntityXPOrb extends Entity
     {
     }
 
+    public int getBrightnessForRender(float partialTicks)
+    {
+        float f = 0.5F;
+        f = MathHelper.clamp_float(f, 0.0F, 1.0F);
+        int i = super.getBrightnessForRender(partialTicks);
+        int j = i & 255;
+        int k = i >> 16 & 255;
+        j = j + (int)(f * 15.0F * 16.0F);
+
+        if (j > 240)
+        {
+            j = 240;
+        }
+
+        return j | k << 16;
+    }
+
     /**
      * Called to update the entity's position/logic.
      */
@@ -233,6 +250,15 @@ public class EntityXPOrb extends Entity
     public int getXpValue()
     {
         return this.xpValue;
+    }
+
+    /**
+     * Returns a number from 1 to 10 based on how much XP this orb is worth. This is used by RenderXPOrb to determine
+     * what texture to use.
+     */
+    public int getTextureByXP()
+    {
+        return this.xpValue >= 2477 ? 10 : (this.xpValue >= 1237 ? 9 : (this.xpValue >= 617 ? 8 : (this.xpValue >= 307 ? 7 : (this.xpValue >= 149 ? 6 : (this.xpValue >= 73 ? 5 : (this.xpValue >= 37 ? 4 : (this.xpValue >= 17 ? 3 : (this.xpValue >= 7 ? 2 : (this.xpValue >= 3 ? 1 : 0)))))))));
     }
 
     /**

@@ -26,6 +26,11 @@ public class EntityEnderPearl extends EntityThrowable
         this.field_181555_c = p_i1783_2_;
     }
 
+    public EntityEnderPearl(World worldIn, double p_i1784_2_, double p_i1784_4_, double p_i1784_6_)
+    {
+        super(worldIn, p_i1784_2_, p_i1784_4_, p_i1784_6_);
+    }
+
     /**
      * Called when this EntityThrowable hits a block or entity.
      */

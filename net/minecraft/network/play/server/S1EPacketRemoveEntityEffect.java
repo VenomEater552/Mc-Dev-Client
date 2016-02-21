@@ -46,4 +46,14 @@ public class S1EPacketRemoveEntityEffect implements Packet<INetHandlerPlayClient
     {
         handler.handleRemoveEntityEffect(this);
     }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
+
+    public int getEffectId()
+    {
+        return this.effectId;
+    }
 }

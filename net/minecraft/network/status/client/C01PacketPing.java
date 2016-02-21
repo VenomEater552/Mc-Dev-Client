@@ -9,6 +9,15 @@ public class C01PacketPing implements Packet<INetHandlerStatusServer>
 {
     private long clientTime;
 
+    public C01PacketPing()
+    {
+    }
+
+    public C01PacketPing(long ping)
+    {
+        this.clientTime = ping;
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

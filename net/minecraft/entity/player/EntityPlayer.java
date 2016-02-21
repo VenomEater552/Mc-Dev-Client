@@ -75,6 +75,7 @@ import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 
+@SuppressWarnings("incomplete-switch")
 public abstract class EntityPlayer extends EntityLivingBase
 {
     /** Inventory of the player */
@@ -118,6 +119,7 @@ public abstract class EntityPlayer extends EntityLivingBase
     public BlockPos playerLocation;
     private int sleepTimer;
     public float renderOffsetX;
+    public float renderOffsetY;
     public float renderOffsetZ;
 
     /** holds the spawn chunk of the player */
@@ -201,11 +203,35 @@ public abstract class EntityPlayer extends EntityLivingBase
     }
 
     /**
+     * returns the ItemStack containing the itemInUse
+     */
+    public ItemStack getItemInUse()
+    {
+        return this.itemInUse;
+    }
+
+    /**
+     * Returns the item in use count
+     */
+    public int getItemInUseCount()
+    {
+        return this.itemInUseCount;
+    }
+
+    /**
      * Checks if the entity is currently using an item (e.g., bow, food, sword) by holding down the useItemButton
      */
     public boolean isUsingItem()
     {
         return this.itemInUse != null;
+    }
+
+    /**
+     * gets the duration for how long the current itemInUse has been in use
+     */
+    public int getItemInUseDuration()
+    {
+        return this.isUsingItem() ? this.itemInUse.getMaxItemUseDuration() - this.itemInUseCount : 0;
     }
 
     public void stopUsingItem()
@@ -478,6 +504,26 @@ public abstract class EntityPlayer extends EntityLivingBase
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 9)
+        {
+            this.onItemUseFinish();
+        }
+        else if (id == 23)
+        {
+            this.hasReducedDebug = false;
+        }
+        else if (id == 22)
+        {
+            this.hasReducedDebug = true;
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * Dead and sleeping entities cannot move
      */
@@ -523,6 +569,18 @@ public abstract class EntityPlayer extends EntityLivingBase
                 this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
             }
         }
+    }
+
+    /**
+     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
+     * (only actually used on players though its also on Entity)
+     */
+    public void preparePlayerToSpawn()
+    {
+        this.setSize(0.6F, 1.8F);
+        super.preparePlayerToSpawn();
+        this.setHealth(this.getMaxHealth());
+        this.deathTime = 0;
     }
 
     protected void updateEntityActionState()
@@ -1391,6 +1449,10 @@ public abstract class EntityPlayer extends EntityLivingBase
     {
     }
 
+    public void respawnPlayer()
+    {
+    }
+
     /**
      * Will get destroyed next tick.
      */
@@ -1414,6 +1476,14 @@ public abstract class EntityPlayer extends EntityLivingBase
     }
 
     /**
+     * returns true if this is an EntityPlayerSP, or the logged in player.
+     */
+    public boolean isUser()
+    {
+        return false;
+    }
+
+    /**
      * Returns the GameProfile for this player
      */
     public GameProfile getGameProfile()
@@ -1421,7 +1491,6 @@ public abstract class EntityPlayer extends EntityLivingBase
         return this.gameProfile;
     }
 
-    @SuppressWarnings("incomplete-switch")
     public EntityPlayer.EnumStatus trySleep(BlockPos bedLocation)
     {
         if (!this.worldObj.isRemote)
@@ -1508,7 +1577,6 @@ public abstract class EntityPlayer extends EntityLivingBase
         return EntityPlayer.EnumStatus.OK;
     }
 
-    @SuppressWarnings("incomplete-switch")
     private void func_175139_a(EnumFacing p_175139_1_)
     {
         this.renderOffsetX = 0.0F;
@@ -1601,6 +1669,34 @@ public abstract class EntityPlayer extends EntityLivingBase
     }
 
     /**
+     * Returns the orientation of the bed in degrees.
+     */
+    public float getBedOrientationInDegrees()
+    {
+        if (this.playerLocation != null)
+        {
+            EnumFacing enumfacing = (EnumFacing)this.worldObj.getBlockState(this.playerLocation).getValue(BlockDirectional.FACING);
+
+            switch (enumfacing)
+            {
+                case SOUTH:
+                    return 90.0F;
+
+                case NORTH:
+                    return 270.0F;
+
+                case WEST:
+                    return 0.0F;
+
+                case EAST:
+                    return 180.0F;
+            }
+        }
+
+        return 0.0F;
+    }
+
+    /**
      * Returns whether player is sleeping or not
      */
     public boolean isPlayerSleeping()
@@ -1614,6 +1710,11 @@ public abstract class EntityPlayer extends EntityLivingBase
     public boolean isPlayerFullyAsleep()
     {
         return this.sleeping && this.sleepTimer >= 100;
+    }
+
+    public int getSleepTimer()
+    {
+        return this.sleepTimer;
     }
 
     public void addChatComponentMessage(IChatComponent chatComponent)
@@ -2059,6 +2160,11 @@ public abstract class EntityPlayer extends EntityLivingBase
         return true;
     }
 
+    public boolean getAlwaysRenderNameTagForRender()
+    {
+        return true;
+    }
+
     /**
      * Copies the values from the given player into this player if boolean par2 is true. Always clones Ender Chest
      * Inventory.
@@ -2153,6 +2259,28 @@ public abstract class EntityPlayer extends EntityLivingBase
     public void setCurrentItemOrArmor(int slotIn, ItemStack stack)
     {
         this.inventory.armorInventory[slotIn] = stack;
+    }
+
+    /**
+     * Only used by renderer in EntityLivingBase subclasses.
+     * Determines if an entity is visible or not to a specfic player, if the entity is normally invisible.
+     * For EntityLivingBase subclasses, returning false when invisible will render the entity semitransparent.
+     */
+    public boolean isInvisibleToPlayer(EntityPlayer player)
+    {
+        if (!this.isInvisible())
+        {
+            return false;
+        }
+        else if (player.isSpectator())
+        {
+            return false;
+        }
+        else
+        {
+            Team team = this.getTeam();
+            return team == null || player == null || player.getTeam() != team || !team.getSeeFriendlyInvisiblesEnabled();
+        }
     }
 
     /**
@@ -2263,6 +2391,11 @@ public abstract class EntityPlayer extends EntityLivingBase
         }
     }
 
+    public boolean isWearing(EnumPlayerModelParts p_175148_1_)
+    {
+        return (this.getDataWatcher().getWatchableObjectByte(10) & p_175148_1_.getPartMask()) == p_175148_1_.getPartMask();
+    }
+
     /**
      * Returns true if the command sender should be sent feedback about executed commands
      */
@@ -2321,6 +2454,19 @@ public abstract class EntityPlayer extends EntityLivingBase
         }
     }
 
+    /**
+     * Whether the "reducedDebugInfo" option is active for this player.
+     */
+    public boolean hasReducedDebug()
+    {
+        return this.hasReducedDebug;
+    }
+
+    public void setReducedDebug(boolean reducedDebug)
+    {
+        this.hasReducedDebug = reducedDebug;
+    }
+
     public static enum EnumChatVisibility
     {
         FULL(0, "options.chat.visibility.full"),
@@ -2345,6 +2491,11 @@ public abstract class EntityPlayer extends EntityLivingBase
         public static EntityPlayer.EnumChatVisibility getEnumChatVisibility(int id)
         {
             return ID_LOOKUP[id % ID_LOOKUP.length];
+        }
+
+        public String getResourceKey()
+        {
+            return this.resourceKey;
         }
 
         static {

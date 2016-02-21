@@ -64,4 +64,29 @@ public class S2CPacketSpawnGlobalEntity implements Packet<INetHandlerPlayClient>
     {
         handler.handleSpawnGlobalEntity(this);
     }
+
+    public int func_149052_c()
+    {
+        return this.entityId;
+    }
+
+    public int func_149051_d()
+    {
+        return this.x;
+    }
+
+    public int func_149050_e()
+    {
+        return this.y;
+    }
+
+    public int func_149049_f()
+    {
+        return this.z;
+    }
+
+    public int func_149053_g()
+    {
+        return this.type;
+    }
 }

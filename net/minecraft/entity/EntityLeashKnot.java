@@ -55,6 +55,15 @@ public class EntityLeashKnot extends EntityHanging
     }
 
     /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        return distance < 1024.0D;
+    }
+
+    /**
      * Called when this entity is broken. Entity parameter may be null.
      */
     public void onBroken(Entity brokenEntity)

@@ -53,6 +53,16 @@ public class BiomeGenMesa extends BiomeGenBase
         return this.worldGeneratorTrees;
     }
 
+    public int getFoliageColorAtPos(BlockPos pos)
+    {
+        return 10387789;
+    }
+
+    public int getGrassColorAtPos(BlockPos pos)
+    {
+        return 9470285;
+    }
+
     public void decorate(World worldIn, Random rand, BlockPos pos)
     {
         super.decorate(worldIn, rand, pos);

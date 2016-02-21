@@ -78,6 +78,11 @@ public class DerivedWorldInfo extends WorldInfo
         return this.theWorldInfo.getWorldTime();
     }
 
+    public long getSizeOnDisk()
+    {
+        return this.theWorldInfo.getSizeOnDisk();
+    }
+
     /**
      * Returns the player's NBTTagCompound to be loaded
      */
@@ -100,6 +105,14 @@ public class DerivedWorldInfo extends WorldInfo
     public int getSaveVersion()
     {
         return this.theWorldInfo.getSaveVersion();
+    }
+
+    /**
+     * Return the last time the player was in this world.
+     */
+    public long getLastTimePlayed()
+    {
+        return this.theWorldInfo.getLastTimePlayed();
     }
 
     /**
@@ -140,6 +153,27 @@ public class DerivedWorldInfo extends WorldInfo
     public WorldSettings.GameType getGameType()
     {
         return this.theWorldInfo.getGameType();
+    }
+
+    /**
+     * Set the x spawn position to the passed in value
+     */
+    public void setSpawnX(int x)
+    {
+    }
+
+    /**
+     * Sets the y spawn position
+     */
+    public void setSpawnY(int y)
+    {
+    }
+
+    /**
+     * Set the z spawn position to the passed in value
+     */
+    public void setSpawnZ(int z)
+    {
     }
 
     public void setWorldTotalTime(long time)

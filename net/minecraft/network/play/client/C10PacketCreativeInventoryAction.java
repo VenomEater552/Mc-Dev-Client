@@ -11,6 +11,16 @@ public class C10PacketCreativeInventoryAction implements Packet<INetHandlerPlayS
     private int slotId;
     private ItemStack stack;
 
+    public C10PacketCreativeInventoryAction()
+    {
+    }
+
+    public C10PacketCreativeInventoryAction(int slotIdIn, ItemStack stackIn)
+    {
+        this.slotId = slotIdIn;
+        this.stack = stackIn != null ? stackIn.copy() : null;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */

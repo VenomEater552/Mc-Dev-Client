@@ -1,5 +1,6 @@
 package net.minecraft.tileentity;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.Entity;
@@ -34,6 +35,16 @@ public class TileEntityCommandBlock extends TileEntity
         public void updateCommand()
         {
             TileEntityCommandBlock.this.getWorld().markBlockForUpdate(TileEntityCommandBlock.this.pos);
+        }
+        public int func_145751_f()
+        {
+            return 0;
+        }
+        public void func_145757_a(ByteBuf p_145757_1_)
+        {
+            p_145757_1_.writeInt(TileEntityCommandBlock.this.pos.getX());
+            p_145757_1_.writeInt(TileEntityCommandBlock.this.pos.getY());
+            p_145757_1_.writeInt(TileEntityCommandBlock.this.pos.getZ());
         }
         public Entity getCommandSenderEntity()
         {

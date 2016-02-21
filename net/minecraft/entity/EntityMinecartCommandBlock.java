@@ -1,5 +1,6 @@
 package net.minecraft.entity;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.item.EntityMinecart;
@@ -19,6 +20,14 @@ public class EntityMinecartCommandBlock extends EntityMinecart
         {
             EntityMinecartCommandBlock.this.getDataWatcher().updateObject(23, this.getCommand());
             EntityMinecartCommandBlock.this.getDataWatcher().updateObject(24, IChatComponent.Serializer.componentToJson(this.getLastOutput()));
+        }
+        public int func_145751_f()
+        {
+            return 1;
+        }
+        public void func_145757_a(ByteBuf p_145757_1_)
+        {
+            p_145757_1_.writeInt(EntityMinecartCommandBlock.this.getEntityId());
         }
         public BlockPos getPosition()
         {

@@ -111,6 +111,15 @@ public class MerchantRecipe
         return this.toolUses >= this.maxTradeUses;
     }
 
+    /**
+     * Compensates {@link net.minecraft.village.MerchantRecipe#toolUses toolUses} with {@link
+     * net.minecraft.village.MerchantRecipe#maxTradeUses maxTradeUses}
+     */
+    public void compensateToolUses()
+    {
+        this.toolUses = this.maxTradeUses;
+    }
+
     public boolean getRewardsExp()
     {
         return this.rewardsExp;

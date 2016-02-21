@@ -28,6 +28,15 @@ public class EntityFireworkRocket extends Entity
         this.dataWatcher.addObjectByDataType(8, 5);
     }
 
+    /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        return distance < 4096.0D;
+    }
+
     public EntityFireworkRocket(World worldIn, double x, double y, double z, ItemStack givenItem)
     {
         super(worldIn);
@@ -52,6 +61,23 @@ public class EntityFireworkRocket extends Entity
         this.motionZ = this.rand.nextGaussian() * 0.001D;
         this.motionY = 0.05D;
         this.lifetime = 10 * i + this.rand.nextInt(6) + this.rand.nextInt(7);
+    }
+
+    /**
+     * Sets the velocity to the args. Args: x, y, z
+     */
+    public void setVelocity(double x, double y, double z)
+    {
+        this.motionX = x;
+        this.motionY = y;
+        this.motionZ = z;
+
+        if (this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F)
+        {
+            float f = MathHelper.sqrt_double(x * x + z * z);
+            this.prevRotationYaw = this.rotationYaw = (float)(MathHelper.func_181159_b(x, z) * 180.0D / Math.PI);
+            this.prevRotationPitch = this.rotationPitch = (float)(MathHelper.func_181159_b(y, (double)f) * 180.0D / Math.PI);
+        }
     }
 
     /**
@@ -112,6 +138,24 @@ public class EntityFireworkRocket extends Entity
         }
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 17 && this.worldObj.isRemote)
+        {
+            ItemStack itemstack = this.dataWatcher.getWatchableObjectItemStack(8);
+            NBTTagCompound nbttagcompound = null;
+
+            if (itemstack != null && itemstack.hasTagCompound())
+            {
+                nbttagcompound = itemstack.getTagCompound().getCompoundTag("Fireworks");
+            }
+
+            this.worldObj.makeFireworks(this.posX, this.posY, this.posZ, this.motionX, this.motionY, this.motionZ, nbttagcompound);
+        }
+
+        super.handleStatusUpdate(id);
+    }
+
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
@@ -155,6 +199,11 @@ public class EntityFireworkRocket extends Entity
     public float getBrightness(float partialTicks)
     {
         return super.getBrightness(partialTicks);
+    }
+
+    public int getBrightnessForRender(float partialTicks)
+    {
+        return super.getBrightnessForRender(partialTicks);
     }
 
     /**

@@ -1,8 +1,10 @@
 package net.minecraft.item;
 
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.IGrowable;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
 public class ItemDye extends Item
@@ -124,6 +127,29 @@ public class ItemDye extends Item
         return false;
     }
 
+    public static void spawnBonemealParticles(World worldIn, BlockPos pos, int amount)
+    {
+        if (amount == 0)
+        {
+            amount = 15;
+        }
+
+        Block block = worldIn.getBlockState(pos).getBlock();
+
+        if (block.getMaterial() != Material.air)
+        {
+            block.setBlockBoundsBasedOnState(worldIn, pos);
+
+            for (int i = 0; i < amount; ++i)
+            {
+                double d0 = itemRand.nextGaussian() * 0.02D;
+                double d1 = itemRand.nextGaussian() * 0.02D;
+                double d2 = itemRand.nextGaussian() * 0.02D;
+                worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
+            }
+        }
+    }
+
     /**
      * Returns true if the item can be used on the given entity, e.g. shears on sheep.
      */
@@ -145,6 +171,17 @@ public class ItemDye extends Item
         else
         {
             return false;
+        }
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        for (int i = 0; i < 16; ++i)
+        {
+            subItems.add(new ItemStack(itemIn, 1, i));
         }
     }
 }

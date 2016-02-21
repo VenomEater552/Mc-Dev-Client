@@ -13,9 +13,12 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeColorHelper;
 
 public abstract class BlockLiquid extends Block
 {
@@ -32,6 +35,11 @@ public abstract class BlockLiquid extends Block
     public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
     {
         return this.blockMaterial != Material.lava;
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return this.blockMaterial == Material.water ? BiomeColorHelper.getWaterColorAtPos(worldIn, pos) : 16777215;
     }
 
     /**
@@ -83,6 +91,31 @@ public abstract class BlockLiquid extends Block
     {
         Material material = worldIn.getBlockState(pos).getBlock().getMaterial();
         return material == this.blockMaterial ? false : (side == EnumFacing.UP ? true : (material == Material.ice ? false : super.isBlockSolid(worldIn, pos, side)));
+    }
+
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return worldIn.getBlockState(pos).getBlock().getMaterial() == this.blockMaterial ? false : (side == EnumFacing.UP ? true : super.shouldSideBeRendered(worldIn, pos, side));
+    }
+
+    public boolean func_176364_g(IBlockAccess blockAccess, BlockPos pos)
+    {
+        for (int i = -1; i <= 1; ++i)
+        {
+            for (int j = -1; j <= 1; ++j)
+            {
+                IBlockState iblockstate = blockAccess.getBlockState(pos.add(i, 0, j));
+                Block block = iblockstate.getBlock();
+                Material material = block.getMaterial();
+
+                if (material != this.blockMaterial && !block.isFullBlock())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
@@ -172,6 +205,90 @@ public abstract class BlockLiquid extends Block
     public int tickRate(World worldIn)
     {
         return this.blockMaterial == Material.water ? 5 : (this.blockMaterial == Material.lava ? (worldIn.provider.getHasNoSky() ? 10 : 30) : 0);
+    }
+
+    public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
+    {
+        int i = worldIn.getCombinedLight(pos, 0);
+        int j = worldIn.getCombinedLight(pos.up(), 0);
+        int k = i & 255;
+        int l = j & 255;
+        int i1 = i >> 16 & 255;
+        int j1 = j >> 16 & 255;
+        return (k > l ? k : l) | (i1 > j1 ? i1 : j1) << 16;
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return this.blockMaterial == Material.water ? EnumWorldBlockLayer.TRANSLUCENT : EnumWorldBlockLayer.SOLID;
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        double d0 = (double)pos.getX();
+        double d1 = (double)pos.getY();
+        double d2 = (double)pos.getZ();
+
+        if (this.blockMaterial == Material.water)
+        {
+            int i = ((Integer)state.getValue(LEVEL)).intValue();
+
+            if (i > 0 && i < 8)
+            {
+                if (rand.nextInt(64) == 0)
+                {
+                    worldIn.playSound(d0 + 0.5D, d1 + 0.5D, d2 + 0.5D, "liquid.water", rand.nextFloat() * 0.25F + 0.75F, rand.nextFloat() * 1.0F + 0.5F, false);
+                }
+            }
+            else if (rand.nextInt(10) == 0)
+            {
+                worldIn.spawnParticle(EnumParticleTypes.SUSPENDED, d0 + (double)rand.nextFloat(), d1 + (double)rand.nextFloat(), d2 + (double)rand.nextFloat(), 0.0D, 0.0D, 0.0D, new int[0]);
+            }
+        }
+
+        if (this.blockMaterial == Material.lava && worldIn.getBlockState(pos.up()).getBlock().getMaterial() == Material.air && !worldIn.getBlockState(pos.up()).getBlock().isOpaqueCube())
+        {
+            if (rand.nextInt(100) == 0)
+            {
+                double d8 = d0 + (double)rand.nextFloat();
+                double d4 = d1 + this.maxY;
+                double d6 = d2 + (double)rand.nextFloat();
+                worldIn.spawnParticle(EnumParticleTypes.LAVA, d8, d4, d6, 0.0D, 0.0D, 0.0D, new int[0]);
+                worldIn.playSound(d8, d4, d6, "liquid.lavapop", 0.2F + rand.nextFloat() * 0.2F, 0.9F + rand.nextFloat() * 0.15F, false);
+            }
+
+            if (rand.nextInt(200) == 0)
+            {
+                worldIn.playSound(d0, d1, d2, "liquid.lava", 0.2F + rand.nextFloat() * 0.2F, 0.9F + rand.nextFloat() * 0.15F, false);
+            }
+        }
+
+        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(worldIn, pos.down()))
+        {
+            Material material = worldIn.getBlockState(pos.down(2)).getBlock().getMaterial();
+
+            if (!material.blocksMovement() && !material.isLiquid())
+            {
+                double d3 = d0 + (double)rand.nextFloat();
+                double d5 = d1 - 1.05D;
+                double d7 = d2 + (double)rand.nextFloat();
+
+                if (this.blockMaterial == Material.water)
+                {
+                    worldIn.spawnParticle(EnumParticleTypes.DRIP_WATER, d3, d5, d7, 0.0D, 0.0D, 0.0D, new int[0]);
+                }
+                else
+                {
+                    worldIn.spawnParticle(EnumParticleTypes.DRIP_LAVA, d3, d5, d7, 0.0D, 0.0D, 0.0D, new int[0]);
+                }
+            }
+        }
+    }
+
+    public static double getFlowDirection(IBlockAccess worldIn, BlockPos pos, Material materialIn)
+    {
+        Vec3 vec3 = getFlowingBlock(materialIn).getFlowVector(worldIn, pos);
+        return vec3.xCoord == 0.0D && vec3.zCoord == 0.0D ? -1000.0D : MathHelper.func_181159_b(vec3.zCoord, vec3.xCoord) - (Math.PI / 2D);
     }
 
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)

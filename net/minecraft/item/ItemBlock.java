@@ -1,9 +1,12 @@
 package net.minecraft.item;
 
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -120,6 +123,22 @@ public class ItemBlock extends Item
         }
     }
 
+    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
+    {
+        Block block = worldIn.getBlockState(pos).getBlock();
+
+        if (block == Blocks.snow_layer)
+        {
+            side = EnumFacing.UP;
+        }
+        else if (!block.isReplaceable(worldIn, pos))
+        {
+            pos = pos.offset(side);
+        }
+
+        return worldIn.canBlockBePlaced(this.block, pos, false, side, (Entity)null, stack);
+    }
+
     /**
      * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
      * different names based on their damage or NBT.
@@ -135,6 +154,22 @@ public class ItemBlock extends Item
     public String getUnlocalizedName()
     {
         return this.block.getUnlocalizedName();
+    }
+
+    /**
+     * gets the CreativeTab this item is displayed on
+     */
+    public CreativeTabs getCreativeTab()
+    {
+        return this.block.getCreativeTabToDisplayOn();
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        this.block.getSubBlocks(itemIn, tab, subItems);
     }
 
     public Block getBlock()

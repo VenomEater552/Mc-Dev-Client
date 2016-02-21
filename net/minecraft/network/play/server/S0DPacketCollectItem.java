@@ -45,4 +45,14 @@ public class S0DPacketCollectItem implements Packet<INetHandlerPlayClient>
     {
         handler.handleCollectItem(this);
     }
+
+    public int getCollectedItemEntityID()
+    {
+        return this.collectedItemEntityId;
+    }
+
+    public int getEntityID()
+    {
+        return this.entityId;
+    }
 }

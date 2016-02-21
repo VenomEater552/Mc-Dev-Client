@@ -13,12 +13,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -70,11 +67,6 @@ public class UserList<K, V extends UserListEntry<K>>
         this.lanServer = state;
     }
 
-    public File getSaveFile()
-    {
-        return this.saveFile;
-    }
-
     /**
      * Adds an entry to the list
      */
@@ -115,11 +107,6 @@ public class UserList<K, V extends UserListEntry<K>>
     public String[] getKeys()
     {
         return (String[])this.values.keySet().toArray(new String[this.values.size()]);
-    }
-
-    public boolean isEmpty()
-    {
-        return this.values.size() < 1;
     }
 
     /**
@@ -180,35 +167,6 @@ public class UserList<K, V extends UserListEntry<K>>
         finally
         {
             IOUtils.closeQuietly((Writer)bufferedwriter);
-        }
-    }
-
-    public void readSavedFile() throws IOException, FileNotFoundException
-    {
-        Collection<UserListEntry<K>> collection = null;
-        BufferedReader bufferedreader = null;
-
-        try
-        {
-            bufferedreader = Files.newReader(this.saveFile, Charsets.UTF_8);
-            collection = (Collection)this.gson.fromJson((Reader)bufferedreader, saveFileFormat);
-        }
-        finally
-        {
-            IOUtils.closeQuietly((Reader)bufferedreader);
-        }
-
-        if (collection != null)
-        {
-            this.values.clear();
-
-            for (UserListEntry<K> userlistentry : collection)
-            {
-                if (userlistentry.getValue() != null)
-                {
-                    this.values.put(this.getObjectKey(userlistentry.getValue()), (V)userlistentry);
-                }
-            }
         }
     }
 

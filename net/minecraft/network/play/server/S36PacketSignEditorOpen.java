@@ -42,4 +42,9 @@ public class S36PacketSignEditorOpen implements Packet<INetHandlerPlayClient>
     {
         buf.writeBlockPos(this.signPosition);
     }
+
+    public BlockPos getSignPosition()
+    {
+        return this.signPosition;
+    }
 }

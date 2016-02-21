@@ -41,4 +41,9 @@ public class S03PacketEnableCompression implements Packet<INetHandlerLoginClient
     {
         handler.handleEnableCompression(this);
     }
+
+    public int getCompressionTreshold()
+    {
+        return this.compressionTreshold;
+    }
 }

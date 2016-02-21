@@ -71,6 +71,14 @@ public class ItemSword extends Item
     }
 
     /**
+     * Returns True is the item is renderer in full 3D when hold.
+     */
+    public boolean isFull3D()
+    {
+        return true;
+    }
+
+    /**
      * returns the action that specifies what animation to play when the items is being used
      */
     public EnumAction getItemUseAction(ItemStack stack)

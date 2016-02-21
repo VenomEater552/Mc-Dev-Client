@@ -45,6 +45,9 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
     private double minecartZ;
     private double minecartYaw;
     private double minecartPitch;
+    private double velocityX;
+    private double velocityY;
+    private double velocityZ;
 
     public EntityMinecart(World worldIn)
     {
@@ -204,6 +207,16 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
 
             this.entityDropItem(itemstack, 0.0F);
         }
+    }
+
+    /**
+     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
+     */
+    public void performHurtAnimation()
+    {
+        this.setRollingDirection(-this.getRollingDirection());
+        this.setRollingAmplitude(10);
+        this.setDamage(this.getDamage() + this.getDamage() * 10.0F);
     }
 
     /**
@@ -676,6 +689,55 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
         this.setEntityBoundingBox(new AxisAlignedBB(x - (double)f, y, z - (double)f, x + (double)f, y + (double)f1, z + (double)f));
     }
 
+    public Vec3 func_70495_a(double p_70495_1_, double p_70495_3_, double p_70495_5_, double p_70495_7_)
+    {
+        int i = MathHelper.floor_double(p_70495_1_);
+        int j = MathHelper.floor_double(p_70495_3_);
+        int k = MathHelper.floor_double(p_70495_5_);
+
+        if (BlockRailBase.isRailBlock(this.worldObj, new BlockPos(i, j - 1, k)))
+        {
+            --j;
+        }
+
+        IBlockState iblockstate = this.worldObj.getBlockState(new BlockPos(i, j, k));
+
+        if (BlockRailBase.isRailBlock(iblockstate))
+        {
+            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.getValue(((BlockRailBase)iblockstate.getBlock()).getShapeProperty());
+            p_70495_3_ = (double)j;
+
+            if (blockrailbase$enumraildirection.isAscending())
+            {
+                p_70495_3_ = (double)(j + 1);
+            }
+
+            int[][] aint = matrix[blockrailbase$enumraildirection.getMetadata()];
+            double d0 = (double)(aint[1][0] - aint[0][0]);
+            double d1 = (double)(aint[1][2] - aint[0][2]);
+            double d2 = Math.sqrt(d0 * d0 + d1 * d1);
+            d0 = d0 / d2;
+            d1 = d1 / d2;
+            p_70495_1_ = p_70495_1_ + d0 * p_70495_7_;
+            p_70495_5_ = p_70495_5_ + d1 * p_70495_7_;
+
+            if (aint[0][1] != 0 && MathHelper.floor_double(p_70495_1_) - i == aint[0][0] && MathHelper.floor_double(p_70495_5_) - k == aint[0][2])
+            {
+                p_70495_3_ += (double)aint[0][1];
+            }
+            else if (aint[1][1] != 0 && MathHelper.floor_double(p_70495_1_) - i == aint[1][0] && MathHelper.floor_double(p_70495_5_) - k == aint[1][2])
+            {
+                p_70495_3_ += (double)aint[1][1];
+            }
+
+            return this.func_70489_a(p_70495_1_, p_70495_3_, p_70495_5_);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public Vec3 func_70489_a(double p_70489_1_, double p_70489_3_, double p_70489_5_)
     {
         int i = MathHelper.floor_double(p_70489_1_);
@@ -903,6 +965,29 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
                 }
             }
         }
+    }
+
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
+    {
+        this.minecartX = x;
+        this.minecartY = y;
+        this.minecartZ = z;
+        this.minecartYaw = (double)yaw;
+        this.minecartPitch = (double)pitch;
+        this.turnProgress = posRotationIncrements + 2;
+        this.motionX = this.velocityX;
+        this.motionY = this.velocityY;
+        this.motionZ = this.velocityZ;
+    }
+
+    /**
+     * Sets the velocity to the args. Args: x, y, z
+     */
+    public void setVelocity(double x, double y, double z)
+    {
+        this.velocityX = this.motionX = x;
+        this.velocityY = this.motionY = y;
+        this.velocityZ = this.motionZ = z;
     }
 
     /**

@@ -51,4 +51,9 @@ public class S13PacketDestroyEntities implements Packet<INetHandlerPlayClient>
     {
         handler.handleDestroyEntities(this);
     }
+
+    public int[] getEntityIDs()
+    {
+        return this.entityIDs;
+    }
 }

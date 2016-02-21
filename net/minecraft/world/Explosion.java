@@ -30,18 +30,32 @@ public class Explosion
 
     /** whether or not this explosion spawns smoke particles */
     private final boolean isSmoking;
-    private final Random explosionRNG = new Random();
+    private final Random explosionRNG;
     private final World worldObj;
     private final double explosionX;
     private final double explosionY;
     private final double explosionZ;
     private final Entity exploder;
     private final float explosionSize;
-    private final List<BlockPos> affectedBlockPositions = Lists.<BlockPos>newArrayList();
-    private final Map<EntityPlayer, Vec3> playerKnockbackMap = Maps.<EntityPlayer, Vec3>newHashMap();
+    private final List<BlockPos> affectedBlockPositions;
+    private final Map<EntityPlayer, Vec3> playerKnockbackMap;
+
+    public Explosion(World worldIn, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
+    {
+        this(worldIn, p_i45752_2_, p_i45752_3_, p_i45752_5_, p_i45752_7_, p_i45752_9_, false, true, p_i45752_10_);
+    }
+
+    public Explosion(World worldIn, Entity p_i45753_2_, double p_i45753_3_, double p_i45753_5_, double p_i45753_7_, float p_i45753_9_, boolean p_i45753_10_, boolean p_i45753_11_, List<BlockPos> p_i45753_12_)
+    {
+        this(worldIn, p_i45753_2_, p_i45753_3_, p_i45753_5_, p_i45753_7_, p_i45753_9_, p_i45753_10_, p_i45753_11_);
+        this.affectedBlockPositions.addAll(p_i45753_12_);
+    }
 
     public Explosion(World worldIn, Entity p_i45754_2_, double p_i45754_3_, double p_i45754_5_, double p_i45754_7_, float size, boolean p_i45754_10_, boolean p_i45754_11_)
     {
+        this.explosionRNG = new Random();
+        this.affectedBlockPositions = Lists.<BlockPos>newArrayList();
+        this.playerKnockbackMap = Maps.<EntityPlayer, Vec3>newHashMap();
         this.worldObj = worldIn;
         this.exploder = p_i45754_2_;
         this.explosionSize = size;

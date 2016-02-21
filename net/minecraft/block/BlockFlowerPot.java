@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
@@ -74,6 +75,23 @@ public class BlockFlowerPot extends BlockContainer
         return false;
     }
 
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if (tileentity instanceof TileEntityFlowerPot)
+        {
+            Item item = ((TileEntityFlowerPot)tileentity).getFlowerPotItem();
+
+            if (item instanceof ItemBlock)
+            {
+                return Block.getBlockFromItem(item).colorMultiplier(worldIn, pos, renderPass);
+            }
+        }
+
+        return 16777215;
+    }
+
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         ItemStack itemstack = playerIn.inventory.getCurrentItem();
@@ -125,10 +143,24 @@ public class BlockFlowerPot extends BlockContainer
         return blockIn != Blocks.yellow_flower && blockIn != Blocks.red_flower && blockIn != Blocks.cactus && blockIn != Blocks.brown_mushroom && blockIn != Blocks.red_mushroom && blockIn != Blocks.sapling && blockIn != Blocks.deadbush ? blockIn == Blocks.tallgrass && meta == BlockTallGrass.EnumType.FERN.getMeta() : true;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        TileEntityFlowerPot tileentityflowerpot = this.getTileEntity(worldIn, pos);
+        return tileentityflowerpot != null && tileentityflowerpot.getFlowerPotItem() != null ? tileentityflowerpot.getFlowerPotItem() : Items.flower_pot;
+    }
+
     public int getDamageValue(World worldIn, BlockPos pos)
     {
         TileEntityFlowerPot tileentityflowerpot = this.getTileEntity(worldIn, pos);
         return tileentityflowerpot != null && tileentityflowerpot.getFlowerPotItem() != null ? tileentityflowerpot.getFlowerPotData() : 0;
+    }
+
+    /**
+     * Returns true only if block is flowerPot
+     */
+    public boolean isFlowerPot()
+    {
+        return true;
     }
 
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
@@ -410,6 +442,11 @@ public class BlockFlowerPot extends BlockContainer
         }
 
         return state.withProperty(CONTENTS, blockflowerpot$enumflowertype);
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     public static enum EnumFlowerType implements IStringSerializable

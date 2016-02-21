@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
 public class BlockEnderChest extends BlockContainer
@@ -126,6 +127,22 @@ public class BlockEnderChest extends BlockContainer
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
         return new TileEntityEnderChest();
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            int j = rand.nextInt(2) * 2 - 1;
+            int k = rand.nextInt(2) * 2 - 1;
+            double d0 = (double)pos.getX() + 0.5D + 0.25D * (double)j;
+            double d1 = (double)((float)pos.getY() + rand.nextFloat());
+            double d2 = (double)pos.getZ() + 0.5D + 0.25D * (double)k;
+            double d3 = (double)(rand.nextFloat() * (float)j);
+            double d4 = ((double)rand.nextFloat() - 0.5D) * 0.125D;
+            double d5 = (double)(rand.nextFloat() * (float)k);
+            worldIn.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5, new int[0]);
+        }
     }
 
     /**

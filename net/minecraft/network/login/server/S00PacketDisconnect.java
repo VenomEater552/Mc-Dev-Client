@@ -42,4 +42,9 @@ public class S00PacketDisconnect implements Packet<INetHandlerLoginClient>
     {
         handler.handleDisconnect(this);
     }
+
+    public IChatComponent func_149603_c()
+    {
+        return this.reason;
+    }
 }

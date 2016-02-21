@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.client.AnvilConverterException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IProgressUpdate;
@@ -17,8 +18,10 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.biome.WorldChunkManagerHell;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.SaveFormatComparator;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraft.world.storage.WorldInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +32,52 @@ public class AnvilSaveConverter extends SaveFormatOld
     public AnvilSaveConverter(File p_i2144_1_)
     {
         super(p_i2144_1_);
+    }
+
+    /**
+     * Returns the name of the save format.
+     */
+    public String getName()
+    {
+        return "Anvil";
+    }
+
+    public List<SaveFormatComparator> getSaveList() throws AnvilConverterException
+    {
+        if (this.savesDirectory != null && this.savesDirectory.exists() && this.savesDirectory.isDirectory())
+        {
+            List<SaveFormatComparator> list = Lists.<SaveFormatComparator>newArrayList();
+            File[] afile = this.savesDirectory.listFiles();
+
+            for (File file1 : afile)
+            {
+                if (file1.isDirectory())
+                {
+                    String s = file1.getName();
+                    WorldInfo worldinfo = this.getWorldInfo(s);
+
+                    if (worldinfo != null && (worldinfo.getSaveVersion() == 19132 || worldinfo.getSaveVersion() == 19133))
+                    {
+                        boolean flag = worldinfo.getSaveVersion() != this.getSaveVersion();
+                        String s1 = worldinfo.getWorldName();
+
+                        if (StringUtils.isEmpty(s1))
+                        {
+                            s1 = s;
+                        }
+
+                        long i = 0L;
+                        list.add(new SaveFormatComparator(s, s1, worldinfo.getLastTimePlayed(), i, worldinfo.getGameType(), flag, worldinfo.isHardcoreModeEnabled(), worldinfo.areCommandsAllowed()));
+                    }
+                }
+            }
+
+            return list;
+        }
+        else
+        {
+            throw new AnvilConverterException("Unable to read or access folder where game worlds are saved!");
+        }
     }
 
     protected int getSaveVersion()
@@ -47,6 +96,12 @@ public class AnvilSaveConverter extends SaveFormatOld
     public ISaveHandler getSaveLoader(String saveName, boolean storePlayerdata)
     {
         return new AnvilSaveHandler(this.savesDirectory, saveName, storePlayerdata);
+    }
+
+    public boolean func_154334_a(String saveName)
+    {
+        WorldInfo worldinfo = this.getWorldInfo(saveName);
+        return worldinfo != null && worldinfo.getSaveVersion() == 19132;
     }
 
     /**

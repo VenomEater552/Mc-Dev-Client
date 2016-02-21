@@ -287,9 +287,22 @@ public class EntityFallingBlock extends Entity
         }
     }
 
+    public World getWorldObj()
+    {
+        return this.worldObj;
+    }
+
     public void setHurtEntities(boolean p_145806_1_)
     {
         this.hurtEntities = p_145806_1_;
+    }
+
+    /**
+     * Return whether this entity should be rendered as on fire.
+     */
+    public boolean canRenderOnFire()
+    {
+        return false;
     }
 
     public void addEntityCrashInfo(CrashReportCategory category)

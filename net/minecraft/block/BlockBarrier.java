@@ -33,6 +33,14 @@ public class BlockBarrier extends Block
     }
 
     /**
+     * Returns the default ambient occlusion value based on block opacity
+     */
+    public float getAmbientOcclusionLightValue()
+    {
+        return 1.0F;
+    }
+
+    /**
      * Spawns this Block's drops into the World as EntityItems.
      */
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)

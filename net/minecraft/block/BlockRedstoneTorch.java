@@ -182,6 +182,33 @@ public class BlockRedstoneTorch extends BlockTorch
         return true;
     }
 
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (this.isOn)
+        {
+            double d0 = (double)pos.getX() + 0.5D + (rand.nextDouble() - 0.5D) * 0.2D;
+            double d1 = (double)pos.getY() + 0.7D + (rand.nextDouble() - 0.5D) * 0.2D;
+            double d2 = (double)pos.getZ() + 0.5D + (rand.nextDouble() - 0.5D) * 0.2D;
+            EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
+
+            if (enumfacing.getAxis().isHorizontal())
+            {
+                EnumFacing enumfacing1 = enumfacing.getOpposite();
+                double d3 = 0.27D;
+                d0 += 0.27D * (double)enumfacing1.getFrontOffsetX();
+                d1 += 0.22D;
+                d2 += 0.27D * (double)enumfacing1.getFrontOffsetZ();
+            }
+
+            worldIn.spawnParticle(EnumParticleTypes.REDSTONE, d0, d1, d2, 0.0D, 0.0D, 0.0D, new int[0]);
+        }
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Item.getItemFromBlock(Blocks.redstone_torch);
+    }
+
     public boolean isAssociatedBlock(Block other)
     {
         return other == Blocks.unlit_redstone_torch || other == Blocks.redstone_torch;

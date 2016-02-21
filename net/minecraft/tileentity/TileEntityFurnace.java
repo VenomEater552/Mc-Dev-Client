@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerFurnace;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.SlotFurnaceFuel;
 import net.minecraft.item.Item;
@@ -221,6 +222,11 @@ public class TileEntityFurnace extends TileEntityLockable implements ITickable, 
     public boolean isBurning()
     {
         return this.furnaceBurnTime > 0;
+    }
+
+    public static boolean isBurning(IInventory p_174903_0_)
+    {
+        return p_174903_0_.getField(0) > 0;
     }
 
     /**

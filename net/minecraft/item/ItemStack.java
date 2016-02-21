@@ -1,29 +1,36 @@
 package net.minecraft.item;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Random;
+import java.util.Map.Entry;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.HoverEvent;
+import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public final class ItemStack
@@ -492,6 +499,11 @@ public final class ItemStack
         this.item.onCreated(this, worldIn, playerIn);
     }
 
+    public boolean getIsItemStackEqual(ItemStack p_179549_1_)
+    {
+        return this.isItemStackEqual(p_179549_1_);
+    }
+
     public int getMaxItemUseDuration()
     {
         return this.getItem().getMaxItemUseDuration(this);
@@ -627,6 +639,226 @@ public final class ItemStack
     public boolean hasDisplayName()
     {
         return this.stackTagCompound == null ? false : (!this.stackTagCompound.hasKey("display", 10) ? false : this.stackTagCompound.getCompoundTag("display").hasKey("Name", 8));
+    }
+
+    public List<String> getTooltip(EntityPlayer playerIn, boolean advanced)
+    {
+        List<String> list = Lists.<String>newArrayList();
+        String s = this.getDisplayName();
+
+        if (this.hasDisplayName())
+        {
+            s = EnumChatFormatting.ITALIC + s;
+        }
+
+        s = s + EnumChatFormatting.RESET;
+
+        if (advanced)
+        {
+            String s1 = "";
+
+            if (s.length() > 0)
+            {
+                s = s + " (";
+                s1 = ")";
+            }
+
+            int i = Item.getIdFromItem(this.item);
+
+            if (this.getHasSubtypes())
+            {
+                s = s + String.format("#%04d/%d%s", new Object[] {Integer.valueOf(i), Integer.valueOf(this.itemDamage), s1});
+            }
+            else
+            {
+                s = s + String.format("#%04d%s", new Object[] {Integer.valueOf(i), s1});
+            }
+        }
+        else if (!this.hasDisplayName() && this.item == Items.filled_map)
+        {
+            s = s + " #" + this.itemDamage;
+        }
+
+        list.add(s);
+        int i1 = 0;
+
+        if (this.hasTagCompound() && this.stackTagCompound.hasKey("HideFlags", 99))
+        {
+            i1 = this.stackTagCompound.getInteger("HideFlags");
+        }
+
+        if ((i1 & 32) == 0)
+        {
+            this.item.addInformation(this, playerIn, list, advanced);
+        }
+
+        if (this.hasTagCompound())
+        {
+            if ((i1 & 1) == 0)
+            {
+                NBTTagList nbttaglist = this.getEnchantmentTagList();
+
+                if (nbttaglist != null)
+                {
+                    for (int j = 0; j < nbttaglist.tagCount(); ++j)
+                    {
+                        int k = nbttaglist.getCompoundTagAt(j).getShort("id");
+                        int l = nbttaglist.getCompoundTagAt(j).getShort("lvl");
+
+                        if (Enchantment.getEnchantmentById(k) != null)
+                        {
+                            list.add(Enchantment.getEnchantmentById(k).getTranslatedName(l));
+                        }
+                    }
+                }
+            }
+
+            if (this.stackTagCompound.hasKey("display", 10))
+            {
+                NBTTagCompound nbttagcompound = this.stackTagCompound.getCompoundTag("display");
+
+                if (nbttagcompound.hasKey("color", 3))
+                {
+                    if (advanced)
+                    {
+                        list.add("Color: #" + Integer.toHexString(nbttagcompound.getInteger("color")).toUpperCase());
+                    }
+                    else
+                    {
+                        list.add(EnumChatFormatting.ITALIC + StatCollector.translateToLocal("item.dyed"));
+                    }
+                }
+
+                if (nbttagcompound.getTagId("Lore") == 9)
+                {
+                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+
+                    if (nbttaglist1.tagCount() > 0)
+                    {
+                        for (int j1 = 0; j1 < nbttaglist1.tagCount(); ++j1)
+                        {
+                            list.add(EnumChatFormatting.DARK_PURPLE + "" + EnumChatFormatting.ITALIC + nbttaglist1.getStringTagAt(j1));
+                        }
+                    }
+                }
+            }
+        }
+
+        Multimap<String, AttributeModifier> multimap = this.getAttributeModifiers();
+
+        if (!multimap.isEmpty() && (i1 & 2) == 0)
+        {
+            list.add("");
+
+            for (Entry<String, AttributeModifier> entry : multimap.entries())
+            {
+                AttributeModifier attributemodifier = (AttributeModifier)entry.getValue();
+                double d0 = attributemodifier.getAmount();
+
+                if (attributemodifier.getID() == Item.itemModifierUUID)
+                {
+                    d0 += (double)EnchantmentHelper.func_152377_a(this, EnumCreatureAttribute.UNDEFINED);
+                }
+
+                double d1;
+
+                if (attributemodifier.getOperation() != 1 && attributemodifier.getOperation() != 2)
+                {
+                    d1 = d0;
+                }
+                else
+                {
+                    d1 = d0 * 100.0D;
+                }
+
+                if (d0 > 0.0D)
+                {
+                    list.add(EnumChatFormatting.BLUE + StatCollector.translateToLocalFormatted("attribute.modifier.plus." + attributemodifier.getOperation(), new Object[] {DECIMALFORMAT.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
+                }
+                else if (d0 < 0.0D)
+                {
+                    d1 = d1 * -1.0D;
+                    list.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted("attribute.modifier.take." + attributemodifier.getOperation(), new Object[] {DECIMALFORMAT.format(d1), StatCollector.translateToLocal("attribute.name." + (String)entry.getKey())}));
+                }
+            }
+        }
+
+        if (this.hasTagCompound() && this.getTagCompound().getBoolean("Unbreakable") && (i1 & 4) == 0)
+        {
+            list.add(EnumChatFormatting.BLUE + StatCollector.translateToLocal("item.unbreakable"));
+        }
+
+        if (this.hasTagCompound() && this.stackTagCompound.hasKey("CanDestroy", 9) && (i1 & 8) == 0)
+        {
+            NBTTagList nbttaglist2 = this.stackTagCompound.getTagList("CanDestroy", 8);
+
+            if (nbttaglist2.tagCount() > 0)
+            {
+                list.add("");
+                list.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal("item.canBreak"));
+
+                for (int k1 = 0; k1 < nbttaglist2.tagCount(); ++k1)
+                {
+                    Block block = Block.getBlockFromName(nbttaglist2.getStringTagAt(k1));
+
+                    if (block != null)
+                    {
+                        list.add(EnumChatFormatting.DARK_GRAY + block.getLocalizedName());
+                    }
+                    else
+                    {
+                        list.add(EnumChatFormatting.DARK_GRAY + "missingno");
+                    }
+                }
+            }
+        }
+
+        if (this.hasTagCompound() && this.stackTagCompound.hasKey("CanPlaceOn", 9) && (i1 & 16) == 0)
+        {
+            NBTTagList nbttaglist3 = this.stackTagCompound.getTagList("CanPlaceOn", 8);
+
+            if (nbttaglist3.tagCount() > 0)
+            {
+                list.add("");
+                list.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal("item.canPlace"));
+
+                for (int l1 = 0; l1 < nbttaglist3.tagCount(); ++l1)
+                {
+                    Block block1 = Block.getBlockFromName(nbttaglist3.getStringTagAt(l1));
+
+                    if (block1 != null)
+                    {
+                        list.add(EnumChatFormatting.DARK_GRAY + block1.getLocalizedName());
+                    }
+                    else
+                    {
+                        list.add(EnumChatFormatting.DARK_GRAY + "missingno");
+                    }
+                }
+            }
+        }
+
+        if (advanced)
+        {
+            if (this.isItemDamaged())
+            {
+                list.add("Durability: " + (this.getMaxDamage() - this.getItemDamage()) + " / " + this.getMaxDamage());
+            }
+
+            list.add(EnumChatFormatting.DARK_GRAY + ((ResourceLocation)Item.itemRegistry.getNameForObject(this.item)).toString());
+
+            if (this.hasTagCompound())
+            {
+                list.add(EnumChatFormatting.DARK_GRAY + "NBT: " + this.getTagCompound().getKeySet().size() + " tag(s)");
+            }
+        }
+
+        return list;
+    }
+
+    public boolean hasEffect()
+    {
+        return this.getItem().hasEffect(this);
     }
 
     public EnumRarity getRarity()

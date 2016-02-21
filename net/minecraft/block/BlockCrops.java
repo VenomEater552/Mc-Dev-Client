@@ -174,6 +174,11 @@ public class BlockCrops extends BlockBush implements IGrowable
         return ((Integer)state.getValue(AGE)).intValue() == 7 ? this.getCrop() : this.getSeed();
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return this.getSeed();
+    }
+
     /**
      * Whether this IGrowable can grow
      */

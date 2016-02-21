@@ -13,6 +13,11 @@ public class DifficultyInstance
         this.additionalDifficulty = this.calculateAdditionalDifficulty(worldDifficulty, worldTime, chunkInhabitedTime, moonPhaseFactor);
     }
 
+    public float getAdditionalDifficulty()
+    {
+        return this.additionalDifficulty;
+    }
+
     public float getClampedAdditionalDifficulty()
     {
         return this.additionalDifficulty < 2.0F ? 0.0F : (this.additionalDifficulty > 4.0F ? 1.0F : (this.additionalDifficulty - 2.0F) / 2.0F);

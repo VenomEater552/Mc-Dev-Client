@@ -1,5 +1,6 @@
 package net.minecraft.village;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,6 +71,38 @@ public class MerchantRecipeList extends ArrayList<MerchantRecipe>
             buffer.writeInt(merchantrecipe.getToolUses());
             buffer.writeInt(merchantrecipe.getMaxTradeUses());
         }
+    }
+
+    public static MerchantRecipeList readFromBuf(PacketBuffer buffer) throws IOException
+    {
+        MerchantRecipeList merchantrecipelist = new MerchantRecipeList();
+        int i = buffer.readByte() & 255;
+
+        for (int j = 0; j < i; ++j)
+        {
+            ItemStack itemstack = buffer.readItemStackFromBuffer();
+            ItemStack itemstack1 = buffer.readItemStackFromBuffer();
+            ItemStack itemstack2 = null;
+
+            if (buffer.readBoolean())
+            {
+                itemstack2 = buffer.readItemStackFromBuffer();
+            }
+
+            boolean flag = buffer.readBoolean();
+            int k = buffer.readInt();
+            int l = buffer.readInt();
+            MerchantRecipe merchantrecipe = new MerchantRecipe(itemstack, itemstack2, itemstack1, k, l);
+
+            if (flag)
+            {
+                merchantrecipe.compensateToolUses();
+            }
+
+            merchantrecipelist.add(merchantrecipe);
+        }
+
+        return merchantrecipelist;
     }
 
     public void readRecipiesFromTags(NBTTagCompound compound)

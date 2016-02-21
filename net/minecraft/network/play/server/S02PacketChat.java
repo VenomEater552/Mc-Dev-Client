@@ -52,8 +52,22 @@ public class S02PacketChat implements Packet<INetHandlerPlayClient>
         handler.handleChat(this);
     }
 
+    public IChatComponent getChatComponent()
+    {
+        return this.chatComponent;
+    }
+
     public boolean isChat()
     {
         return this.type == 1 || this.type == 2;
+    }
+
+    /**
+     * Returns the id of the area to display the text, 2 for above the action bar, anything else currently for the chat
+     * window
+     */
+    public byte getType()
+    {
+        return this.type;
     }
 }

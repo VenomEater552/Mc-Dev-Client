@@ -1,5 +1,6 @@
 package net.minecraft.tileentity;
 
+import com.google.common.collect.Lists;
 import java.util.List;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Blocks;
@@ -117,9 +118,67 @@ public class TileEntityBanner extends TileEntity
         return nbttagcompound != null && nbttagcompound.hasKey("Patterns") ? nbttagcompound.getTagList("Patterns", 10).tagCount() : 0;
     }
 
+    public List<TileEntityBanner.EnumBannerPattern> getPatternList()
+    {
+        this.initializeBannerData();
+        return this.patternList;
+    }
+
     public NBTTagList func_181021_d()
     {
         return this.patterns;
+    }
+
+    public List<EnumDyeColor> getColorList()
+    {
+        this.initializeBannerData();
+        return this.colorList;
+    }
+
+    public String func_175116_e()
+    {
+        this.initializeBannerData();
+        return this.patternResourceLocation;
+    }
+
+    /**
+     * Establishes all of the basic properties for the banner. This will also apply the data from the tile entities nbt
+     * tag compounds.
+     */
+    private void initializeBannerData()
+    {
+        if (this.patternList == null || this.colorList == null || this.patternResourceLocation == null)
+        {
+            if (!this.field_175119_g)
+            {
+                this.patternResourceLocation = "";
+            }
+            else
+            {
+                this.patternList = Lists.<TileEntityBanner.EnumBannerPattern>newArrayList();
+                this.colorList = Lists.<EnumDyeColor>newArrayList();
+                this.patternList.add(TileEntityBanner.EnumBannerPattern.BASE);
+                this.colorList.add(EnumDyeColor.byDyeDamage(this.baseColor));
+                this.patternResourceLocation = "b" + this.baseColor;
+
+                if (this.patterns != null)
+                {
+                    for (int i = 0; i < this.patterns.tagCount(); ++i)
+                    {
+                        NBTTagCompound nbttagcompound = this.patterns.getCompoundTagAt(i);
+                        TileEntityBanner.EnumBannerPattern tileentitybanner$enumbannerpattern = TileEntityBanner.EnumBannerPattern.getPatternByID(nbttagcompound.getString("Pattern"));
+
+                        if (tileentitybanner$enumbannerpattern != null)
+                        {
+                            this.patternList.add(tileentitybanner$enumbannerpattern);
+                            int j = nbttagcompound.getInteger("Color");
+                            this.colorList.add(EnumDyeColor.byDyeDamage(j));
+                            this.patternResourceLocation = this.patternResourceLocation + tileentitybanner$enumbannerpattern.getPatternID() + j;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -218,6 +277,11 @@ public class TileEntityBanner extends TileEntity
             this.craftingLayers[2] = craftingBot;
         }
 
+        public String getPatternName()
+        {
+            return this.patternName;
+        }
+
         public String getPatternID()
         {
             return this.patternID;
@@ -241,6 +305,19 @@ public class TileEntityBanner extends TileEntity
         public ItemStack getCraftingStack()
         {
             return this.patternCraftingStack;
+        }
+
+        public static TileEntityBanner.EnumBannerPattern getPatternByID(String id)
+        {
+            for (TileEntityBanner.EnumBannerPattern tileentitybanner$enumbannerpattern : values())
+            {
+                if (tileentitybanner$enumbannerpattern.patternID.equals(id))
+                {
+                    return tileentitybanner$enumbannerpattern;
+                }
+            }
+
+            return null;
         }
     }
 }

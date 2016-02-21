@@ -44,4 +44,14 @@ public class S41PacketServerDifficulty implements Packet<INetHandlerPlayClient>
     {
         buf.writeByte(this.difficulty.getDifficultyId());
     }
+
+    public boolean isDifficultyLocked()
+    {
+        return this.difficultyLocked;
+    }
+
+    public EnumDifficulty getDifficulty()
+    {
+        return this.difficulty;
+    }
 }

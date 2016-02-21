@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -65,6 +66,11 @@ public abstract class BlockRedstoneDiode extends BlockDirectional
                 }
             }
         }
+    }
+
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return side.getAxis() != EnumFacing.Axis.Y;
     }
 
     protected boolean isPowered(IBlockState state)
@@ -275,5 +281,10 @@ public abstract class BlockRedstoneDiode extends BlockDirectional
     public boolean isAssociatedBlock(Block other)
     {
         return this.isAssociated(other);
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 }

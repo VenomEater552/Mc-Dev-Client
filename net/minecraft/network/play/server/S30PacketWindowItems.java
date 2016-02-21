@@ -64,4 +64,14 @@ public class S30PacketWindowItems implements Packet<INetHandlerPlayClient>
     {
         handler.handleWindowItems(this);
     }
+
+    public int func_148911_c()
+    {
+        return this.windowId;
+    }
+
+    public ItemStack[] getItemStacks()
+    {
+        return this.itemStacks;
+    }
 }

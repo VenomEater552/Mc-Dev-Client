@@ -54,6 +54,11 @@ public class BlockRedstoneComparator extends BlockRedstoneDiode implements ITile
         return Items.comparator;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.comparator;
+    }
+
     protected int getDelay(IBlockState state)
     {
         return 2;

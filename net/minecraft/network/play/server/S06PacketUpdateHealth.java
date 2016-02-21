@@ -49,4 +49,19 @@ public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient>
     {
         handler.handleUpdateHealth(this);
     }
+
+    public float getHealth()
+    {
+        return this.health;
+    }
+
+    public int getFoodLevel()
+    {
+        return this.foodLevel;
+    }
+
+    public float getSaturationLevel()
+    {
+        return this.saturationLevel;
+    }
 }

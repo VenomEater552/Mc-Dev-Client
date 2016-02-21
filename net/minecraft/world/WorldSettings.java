@@ -51,6 +51,15 @@ public final class WorldSettings
         return this;
     }
 
+    /**
+     * Enables Commands (cheats).
+     */
+    public WorldSettings enableCommands()
+    {
+        this.commandsAllowed = true;
+        return this;
+    }
+
     public WorldSettings setWorldName(String name)
     {
         this.worldName = name;
@@ -196,6 +205,19 @@ public final class WorldSettings
             for (WorldSettings.GameType worldsettings$gametype : values())
             {
                 if (worldsettings$gametype.id == idIn)
+                {
+                    return worldsettings$gametype;
+                }
+            }
+
+            return SURVIVAL;
+        }
+
+        public static WorldSettings.GameType getByName(String p_77142_0_)
+        {
+            for (WorldSettings.GameType worldsettings$gametype : values())
+            {
+                if (worldsettings$gametype.name.equals(p_77142_0_))
                 {
                     return worldsettings$gametype;
                 }

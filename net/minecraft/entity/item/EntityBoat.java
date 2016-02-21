@@ -29,6 +29,9 @@ public class EntityBoat extends Entity
     private double boatZ;
     private double boatYaw;
     private double boatPitch;
+    private double velocityX;
+    private double velocityY;
+    private double velocityZ;
 
     public EntityBoat(World worldIn)
     {
@@ -148,11 +151,78 @@ public class EntityBoat extends Entity
     }
 
     /**
+     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
+     */
+    public void performHurtAnimation()
+    {
+        this.setForwardDirection(-this.getForwardDirection());
+        this.setTimeSinceHit(10);
+        this.setDamageTaken(this.getDamageTaken() * 11.0F);
+    }
+
+    /**
      * Returns true if other Entities should be prevented from moving through this Entity.
      */
     public boolean canBeCollidedWith()
     {
         return !this.isDead;
+    }
+
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
+    {
+        if (p_180426_10_ && this.riddenByEntity != null)
+        {
+            this.prevPosX = this.posX = x;
+            this.prevPosY = this.posY = y;
+            this.prevPosZ = this.posZ = z;
+            this.rotationYaw = yaw;
+            this.rotationPitch = pitch;
+            this.boatPosRotationIncrements = 0;
+            this.setPosition(x, y, z);
+            this.motionX = this.velocityX = 0.0D;
+            this.motionY = this.velocityY = 0.0D;
+            this.motionZ = this.velocityZ = 0.0D;
+        }
+        else
+        {
+            if (this.isBoatEmpty)
+            {
+                this.boatPosRotationIncrements = posRotationIncrements + 5;
+            }
+            else
+            {
+                double d0 = x - this.posX;
+                double d1 = y - this.posY;
+                double d2 = z - this.posZ;
+                double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+
+                if (d3 <= 1.0D)
+                {
+                    return;
+                }
+
+                this.boatPosRotationIncrements = 3;
+            }
+
+            this.boatX = x;
+            this.boatY = y;
+            this.boatZ = z;
+            this.boatYaw = (double)yaw;
+            this.boatPitch = (double)pitch;
+            this.motionX = this.velocityX;
+            this.motionY = this.velocityY;
+            this.motionZ = this.velocityZ;
+        }
+    }
+
+    /**
+     * Sets the velocity to the args. Args: x, y, z
+     */
+    public void setVelocity(double x, double y, double z)
+    {
+        this.velocityX = this.motionX = x;
+        this.velocityY = this.motionY = y;
+        this.velocityZ = this.motionZ = z;
     }
 
     /**
@@ -539,5 +609,13 @@ public class EntityBoat extends Entity
     public int getForwardDirection()
     {
         return this.dataWatcher.getWatchableObjectInt(18);
+    }
+
+    /**
+     * true if no player in boat
+     */
+    public void setIsBoatEmpty(boolean p_70270_1_)
+    {
+        this.isBoatEmpty = p_70270_1_;
     }
 }

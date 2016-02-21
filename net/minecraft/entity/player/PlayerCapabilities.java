@@ -64,8 +64,18 @@ public class PlayerCapabilities
         return this.flySpeed;
     }
 
+    public void setFlySpeed(float speed)
+    {
+        this.flySpeed = speed;
+    }
+
     public float getWalkSpeed()
     {
         return this.walkSpeed;
+    }
+
+    public void setPlayerWalkSpeed(float speed)
+    {
+        this.walkSpeed = speed;
     }
 }

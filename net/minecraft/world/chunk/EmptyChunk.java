@@ -36,6 +36,13 @@ public class EmptyChunk extends Chunk
     }
 
     /**
+     * Generates the height map for a chunk from scratch
+     */
+    public void generateHeightMap()
+    {
+    }
+
+    /**
      * Generates the initial skylight map for the chunk upon generation or load.
      */
     public void generateSkylightMap()

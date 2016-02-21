@@ -17,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -544,6 +545,11 @@ public class BlockStairs extends Block
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        this.modelBlock.randomDisplayTick(worldIn, pos, state, rand);
+    }
+
     public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn)
     {
         this.modelBlock.onBlockClicked(worldIn, pos, playerIn);
@@ -557,6 +563,11 @@ public class BlockStairs extends Block
         this.modelBlock.onBlockDestroyedByPlayer(worldIn, pos, state);
     }
 
+    public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
+    {
+        return this.modelBlock.getMixedBrightnessForBlock(worldIn, pos);
+    }
+
     /**
      * Returns how much this block can resist explosions from the passed in entity.
      */
@@ -565,12 +576,22 @@ public class BlockStairs extends Block
         return this.modelBlock.getExplosionResistance(exploder);
     }
 
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return this.modelBlock.getBlockLayer();
+    }
+
     /**
      * How many world ticks before ticking
      */
     public int tickRate(World worldIn)
     {
         return this.modelBlock.tickRate(worldIn);
+    }
+
+    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos)
+    {
+        return this.modelBlock.getSelectedBoundingBox(worldIn, pos);
     }
 
     public Vec3 modifyAcceleration(World worldIn, BlockPos pos, Entity entityIn, Vec3 motion)

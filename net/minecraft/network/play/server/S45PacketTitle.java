@@ -85,6 +85,31 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient>
         handler.handleTitle(this);
     }
 
+    public S45PacketTitle.Type getType()
+    {
+        return this.type;
+    }
+
+    public IChatComponent getMessage()
+    {
+        return this.message;
+    }
+
+    public int getFadeInTime()
+    {
+        return this.fadeInTime;
+    }
+
+    public int getDisplayTime()
+    {
+        return this.displayTime;
+    }
+
+    public int getFadeOutTime()
+    {
+        return this.fadeOutTime;
+    }
+
     public static enum Type
     {
         TITLE,

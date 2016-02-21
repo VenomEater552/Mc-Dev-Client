@@ -7,6 +7,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.IJsonSerializable;
+import net.minecraft.util.StatCollector;
 
 public class Achievement extends StatBase
 {
@@ -29,6 +30,12 @@ public class Achievement extends StatBase
      * Holds the description of the achievement, ready to be formatted and/or displayed.
      */
     private final String achievementDescription;
+
+    /**
+     * Holds a string formatter for the achievement, some of then needs extra dynamic info - like the key used to open
+     * the inventory.
+     */
+    private IStatStringFormat statStringFormatter;
 
     /**
      * Holds the ItemStack that will be used to draw the achievement into the GUI.
@@ -130,6 +137,23 @@ public class Achievement extends StatBase
     public Achievement func_150953_b(Class <? extends IJsonSerializable > p_150953_1_)
     {
         return (Achievement)super.func_150953_b(p_150953_1_);
+    }
+
+    /**
+     * Returns the fully description of the achievement - ready to be displayed on screen.
+     */
+    public String getDescription()
+    {
+        return this.statStringFormatter != null ? this.statStringFormatter.formatString(StatCollector.translateToLocal(this.achievementDescription)) : StatCollector.translateToLocal(this.achievementDescription);
+    }
+
+    /**
+     * Defines a string formatter for the achievement.
+     */
+    public Achievement setStatStringFormatter(IStatStringFormat p_75988_1_)
+    {
+        this.statStringFormatter = p_75988_1_;
+        return this;
     }
 
     /**

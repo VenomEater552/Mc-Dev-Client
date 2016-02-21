@@ -59,4 +59,14 @@ public class S33PacketUpdateSign implements Packet<INetHandlerPlayClient>
     {
         handler.handleUpdateSign(this);
     }
+
+    public BlockPos getPos()
+    {
+        return this.blockPos;
+    }
+
+    public IChatComponent[] getLines()
+    {
+        return this.lines;
+    }
 }

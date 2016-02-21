@@ -46,4 +46,14 @@ public class S2BPacketChangeGameState implements Packet<INetHandlerPlayClient>
     {
         handler.handleChangeGameState(this);
     }
+
+    public int getGameState()
+    {
+        return this.state;
+    }
+
+    public float func_149137_d()
+    {
+        return this.field_149141_c;
+    }
 }

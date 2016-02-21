@@ -42,4 +42,9 @@ public class S40PacketDisconnect implements Packet<INetHandlerPlayClient>
     {
         handler.handleDisconnect(this);
     }
+
+    public IChatComponent getReason()
+    {
+        return this.reason;
+    }
 }

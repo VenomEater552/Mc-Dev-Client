@@ -12,6 +12,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -86,6 +87,11 @@ public class BlockRedstoneRepeater extends BlockRedstoneDiode
         return Items.repeater;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.repeater;
+    }
+
     public boolean isLocked(IBlockAccess worldIn, BlockPos pos, IBlockState state)
     {
         return this.getPowerOnSides(worldIn, pos, state) > 0;
@@ -94,6 +100,28 @@ public class BlockRedstoneRepeater extends BlockRedstoneDiode
     protected boolean canPowerSide(Block blockIn)
     {
         return isRedstoneRepeaterBlockID(blockIn);
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (this.isRepeaterPowered)
+        {
+            EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
+            double d0 = (double)((float)pos.getX() + 0.5F) + (double)(rand.nextFloat() - 0.5F) * 0.2D;
+            double d1 = (double)((float)pos.getY() + 0.4F) + (double)(rand.nextFloat() - 0.5F) * 0.2D;
+            double d2 = (double)((float)pos.getZ() + 0.5F) + (double)(rand.nextFloat() - 0.5F) * 0.2D;
+            float f = -5.0F;
+
+            if (rand.nextBoolean())
+            {
+                f = (float)(((Integer)state.getValue(DELAY)).intValue() * 2 - 1);
+            }
+
+            f = f / 16.0F;
+            double d3 = (double)(f * (float)enumfacing.getFrontOffsetX());
+            double d4 = (double)(f * (float)enumfacing.getFrontOffsetZ());
+            worldIn.spawnParticle(EnumParticleTypes.REDSTONE, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+        }
     }
 
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)

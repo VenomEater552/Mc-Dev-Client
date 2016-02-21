@@ -10,10 +10,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -69,6 +71,12 @@ public class BlockCocoa extends BlockDirectional implements IGrowable
     {
         this.setBlockBoundsBasedOnState(worldIn, pos);
         return super.getCollisionBoundingBox(worldIn, pos, state);
+    }
+
+    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos)
+    {
+        this.setBlockBoundsBasedOnState(worldIn, pos);
+        return super.getSelectedBoundingBox(worldIn, pos);
     }
 
     @SuppressWarnings("incomplete-switch")
@@ -159,6 +167,11 @@ public class BlockCocoa extends BlockDirectional implements IGrowable
         }
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Items.dye;
+    }
+
     public int getDamageValue(World worldIn, BlockPos pos)
     {
         return EnumDyeColor.BROWN.getDyeDamage();
@@ -180,6 +193,11 @@ public class BlockCocoa extends BlockDirectional implements IGrowable
     public void grow(World worldIn, Random rand, BlockPos pos, IBlockState state)
     {
         worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(((Integer)state.getValue(AGE)).intValue() + 1)), 2);
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     /**

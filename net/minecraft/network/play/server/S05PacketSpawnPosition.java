@@ -42,4 +42,9 @@ public class S05PacketSpawnPosition implements Packet<INetHandlerPlayClient>
     {
         handler.handleSpawnPosition(this);
     }
+
+    public BlockPos getSpawnPos()
+    {
+        return this.spawnBlockPos;
+    }
 }

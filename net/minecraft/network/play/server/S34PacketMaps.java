@@ -6,6 +6,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.Vec4b;
+import net.minecraft.world.storage.MapData;
 
 public class S34PacketMaps implements Packet<INetHandlerPlayClient>
 {
@@ -101,5 +102,33 @@ public class S34PacketMaps implements Packet<INetHandlerPlayClient>
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleMaps(this);
+    }
+
+    public int getMapId()
+    {
+        return this.mapId;
+    }
+
+    /**
+     * Sets new MapData from the packet to given MapData param
+     */
+    public void setMapdataTo(MapData mapdataIn)
+    {
+        mapdataIn.scale = this.mapScale;
+        mapdataIn.mapDecorations.clear();
+
+        for (int i = 0; i < this.mapVisiblePlayersVec4b.length; ++i)
+        {
+            Vec4b vec4b = this.mapVisiblePlayersVec4b[i];
+            mapdataIn.mapDecorations.put("icon-" + i, vec4b);
+        }
+
+        for (int j = 0; j < this.mapMaxX; ++j)
+        {
+            for (int k = 0; k < this.mapMaxY; ++k)
+            {
+                mapdataIn.colors[this.mapMinX + j + (this.mapMinY + k) * 128] = this.mapDataBytes[j + k * this.mapMaxX];
+            }
+        }
     }
 }

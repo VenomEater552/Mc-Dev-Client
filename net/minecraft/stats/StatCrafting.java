@@ -19,4 +19,9 @@ public class StatCrafting extends StatBase
             IScoreObjectiveCriteria.INSTANCES.put(p_i45910_1_ + i, this.func_150952_k());
         }
     }
+
+    public Item func_150959_a()
+    {
+        return this.field_150960_a;
+    }
 }

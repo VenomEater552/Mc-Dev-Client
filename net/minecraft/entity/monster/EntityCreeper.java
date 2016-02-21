@@ -215,6 +215,14 @@ public class EntityCreeper extends EntityMob
         return this.dataWatcher.getWatchableObjectByte(17) == 1;
     }
 
+    /**
+     * Params: (Float)Render tick. Returns the intensity of the creeper's flash when it is ignited.
+     */
+    public float getCreeperFlashIntensity(float p_70831_1_)
+    {
+        return ((float)this.lastActiveTime + (float)(this.timeSinceIgnited - this.lastActiveTime) * p_70831_1_) / (float)(this.fuseTime - 2);
+    }
+
     protected Item getDropItem()
     {
         return Items.gunpowder;

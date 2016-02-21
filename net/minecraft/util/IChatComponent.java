@@ -42,6 +42,11 @@ public interface IChatComponent extends Iterable<IChatComponent>
      */
     String getUnformattedText();
 
+    /**
+     * Gets the text of this component, with formatting codes added for rendering.
+     */
+    String getFormattedText();
+
     List<IChatComponent> getSiblings();
 
     /**

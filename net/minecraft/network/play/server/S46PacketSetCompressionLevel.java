@@ -32,4 +32,9 @@ public class S46PacketSetCompressionLevel implements Packet<INetHandlerPlayClien
     {
         handler.handleSetCompressionLevel(this);
     }
+
+    public int func_179760_a()
+    {
+        return this.field_179761_a;
+    }
 }

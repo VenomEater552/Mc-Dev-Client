@@ -48,4 +48,9 @@ public class S00PacketServerInfo implements Packet<INetHandlerStatusClient>
     {
         handler.handleServerInfo(this);
     }
+
+    public ServerStatusResponse getResponse()
+    {
+        return this.response;
+    }
 }

@@ -122,6 +122,11 @@ public class Slot
         return this.getSlotStackLimit();
     }
 
+    public String getSlotTexture()
+    {
+        return null;
+    }
+
     /**
      * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg. Returns the new
      * stack.
@@ -143,6 +148,15 @@ public class Slot
      * Return whether this slot's stack can be taken from this slot.
      */
     public boolean canTakeStack(EntityPlayer playerIn)
+    {
+        return true;
+    }
+
+    /**
+     * Actualy only call when we want to render the white square effect over the slots. Return always True, except for
+     * the armor slot of the Donkey/Mule (we can't interact with the Undead and Skeleton horses)
+     */
+    public boolean canBeHovered()
     {
         return true;
     }

@@ -51,6 +51,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Tuple;
@@ -600,6 +601,10 @@ public class EntityVillager extends EntityAgeable implements IMerchant, INpc
         }
     }
 
+    public void setRecipes(MerchantRecipeList recipeList)
+    {
+    }
+
     /**
      * Get the formatted ChatComponent that will be used for the sender's username in chat
      */
@@ -704,6 +709,37 @@ public class EntityVillager extends EntityAgeable implements IMerchant, INpc
         }
 
         return f;
+    }
+
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 12)
+        {
+            this.spawnParticles(EnumParticleTypes.HEART);
+        }
+        else if (id == 13)
+        {
+            this.spawnParticles(EnumParticleTypes.VILLAGER_ANGRY);
+        }
+        else if (id == 14)
+        {
+            this.spawnParticles(EnumParticleTypes.VILLAGER_HAPPY);
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
+    private void spawnParticles(EnumParticleTypes particleType)
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            double d0 = this.rand.nextGaussian() * 0.02D;
+            double d1 = this.rand.nextGaussian() * 0.02D;
+            double d2 = this.rand.nextGaussian() * 0.02D;
+            this.worldObj.spawnParticle(particleType, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + 1.0D + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, d0, d1, d2, new int[0]);
+        }
     }
 
     /**

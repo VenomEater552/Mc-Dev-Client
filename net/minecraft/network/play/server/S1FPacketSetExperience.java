@@ -49,4 +49,19 @@ public class S1FPacketSetExperience implements Packet<INetHandlerPlayClient>
     {
         handler.handleSetExperience(this);
     }
+
+    public float func_149397_c()
+    {
+        return this.field_149401_a;
+    }
+
+    public int getTotalExperience()
+    {
+        return this.totalExperience;
+    }
+
+    public int getLevel()
+    {
+        return this.level;
+    }
 }

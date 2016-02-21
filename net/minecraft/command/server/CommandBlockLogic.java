@@ -1,5 +1,6 @@
 package net.minecraft.command.server;
 
+import io.netty.buffer.ByteBuf;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -213,6 +214,10 @@ public abstract class CommandBlockLogic implements ICommandSender
     }
 
     public abstract void updateCommand();
+
+    public abstract int func_145751_f();
+
+    public abstract void func_145757_a(ByteBuf p_145757_1_);
 
     public void setLastOutput(IChatComponent lastOutputMessage)
     {

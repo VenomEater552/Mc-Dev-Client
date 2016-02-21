@@ -18,6 +18,7 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -28,6 +29,23 @@ import org.apache.logging.log4j.Logger;
 public class CryptManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    /**
+     * Generate a new shared secret AES key from a secure random source
+     */
+    public static SecretKey createNewSharedKey()
+    {
+        try
+        {
+            KeyGenerator keygenerator = KeyGenerator.getInstance("AES");
+            keygenerator.init(128);
+            return keygenerator.generateKey();
+        }
+        catch (NoSuchAlgorithmException nosuchalgorithmexception)
+        {
+            throw new Error(nosuchalgorithmexception);
+        }
+    }
 
     /**
      * Generates RSA KeyPair
@@ -117,6 +135,14 @@ public class CryptManager
     public static SecretKey decryptSharedKey(PrivateKey key, byte[] secretKeyEncrypted)
     {
         return new SecretKeySpec(decryptData(key, secretKeyEncrypted), "AES");
+    }
+
+    /**
+     * Encrypt byte[] data with RSA public key
+     */
+    public static byte[] encryptData(Key key, byte[] data)
+    {
+        return cipherOperation(1, key, data);
     }
 
     /**

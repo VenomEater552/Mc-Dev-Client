@@ -23,6 +23,11 @@ public class ItemLeaves extends ItemBlock
         return damage | 4;
     }
 
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        return this.leaves.getRenderColor(this.leaves.getStateFromMeta(stack.getMetadata()));
+    }
+
     /**
      * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
      * different names based on their damage or NBT.

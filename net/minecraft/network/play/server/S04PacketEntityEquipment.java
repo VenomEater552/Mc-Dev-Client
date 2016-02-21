@@ -50,4 +50,19 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>
     {
         handler.handleEntityEquipment(this);
     }
+
+    public ItemStack getItemStack()
+    {
+        return this.itemStack;
+    }
+
+    public int getEntityID()
+    {
+        return this.entityID;
+    }
+
+    public int getEquipmentSlot()
+    {
+        return this.equipmentSlot;
+    }
 }

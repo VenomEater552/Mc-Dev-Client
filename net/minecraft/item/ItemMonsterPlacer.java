@@ -1,5 +1,6 @@
 package net.minecraft.item;
 
+import java.util.List;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +42,12 @@ public class ItemMonsterPlacer extends Item
         }
 
         return s;
+    }
+
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(stack.getMetadata()));
+        return entitylist$entityegginfo != null ? (renderPass == 0 ? entitylist$entityegginfo.primaryColor : entitylist$entityegginfo.secondaryColor) : 16777215;
     }
 
     /**
@@ -197,6 +204,17 @@ public class ItemMonsterPlacer extends Item
             }
 
             return entity;
+        }
+    }
+
+    /**
+     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+     */
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        for (EntityList.EntityEggInfo entitylist$entityegginfo : EntityList.entityEggs.values())
+        {
+            subItems.add(new ItemStack(itemIn, 1, entitylist$entityegginfo.spawnedID));
         }
     }
 }

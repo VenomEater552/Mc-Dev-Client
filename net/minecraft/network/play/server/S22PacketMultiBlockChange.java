@@ -68,6 +68,11 @@ public class S22PacketMultiBlockChange implements Packet<INetHandlerPlayClient>
         handler.handleMultiBlockChange(this);
     }
 
+    public S22PacketMultiBlockChange.BlockUpdateData[] getChangedBlocks()
+    {
+        return this.changedBlocks;
+    }
+
     public class BlockUpdateData
     {
         private final short chunkPosCrammed;

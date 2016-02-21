@@ -34,9 +34,9 @@ public class EntityFishHook extends Entity
     private static final List<WeightedRandomFishable> JUNK = Arrays.<WeightedRandomFishable>asList(new WeightedRandomFishable[] {(new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).setMaxDamagePercent(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).setMaxDamagePercent(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, EnumDyeColor.BLACK.getDyeDamage()), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10)});
     private static final List<WeightedRandomFishable> TREASURE = Arrays.<WeightedRandomFishable>asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1), new WeightedRandomFishable(new ItemStack(Items.name_tag), 1), new WeightedRandomFishable(new ItemStack(Items.saddle), 1), (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).setMaxDamagePercent(0.25F).setEnchantable(), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).setMaxDamagePercent(0.25F).setEnchantable(), (new WeightedRandomFishable(new ItemStack(Items.book), 1)).setEnchantable()});
     private static final List<WeightedRandomFishable> FISH = Arrays.<WeightedRandomFishable>asList(new WeightedRandomFishable[] {new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.getMetadata()), 60), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.getMetadata()), 25), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.getMetadata()), 2), new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.getMetadata()), 13)});
-    private int xTile = -1;
-    private int yTile = -1;
-    private int zTile = -1;
+    private int xTile;
+    private int yTile;
+    private int zTile;
     private Block inTile;
     private boolean inGround;
     public int shake;
@@ -54,6 +54,9 @@ public class EntityFishHook extends Entity
     private double fishZ;
     private double fishYaw;
     private double fishPitch;
+    private double clientMotionX;
+    private double clientMotionY;
+    private double clientMotionZ;
 
     public static List<WeightedRandomFishable> func_174855_j()
     {
@@ -63,13 +66,28 @@ public class EntityFishHook extends Entity
     public EntityFishHook(World worldIn)
     {
         super(worldIn);
+        this.xTile = -1;
+        this.yTile = -1;
+        this.zTile = -1;
         this.setSize(0.25F, 0.25F);
         this.ignoreFrustumCheck = true;
+    }
+
+    public EntityFishHook(World worldIn, double x, double y, double z, EntityPlayer anglerIn)
+    {
+        this(worldIn);
+        this.setPosition(x, y, z);
+        this.ignoreFrustumCheck = true;
+        this.angler = anglerIn;
+        anglerIn.fishEntity = this;
     }
 
     public EntityFishHook(World worldIn, EntityPlayer fishingPlayer)
     {
         super(worldIn);
+        this.xTile = -1;
+        this.yTile = -1;
+        this.zTile = -1;
         this.ignoreFrustumCheck = true;
         this.angler = fishingPlayer;
         this.angler.fishEntity = this;
@@ -88,6 +106,23 @@ public class EntityFishHook extends Entity
 
     protected void entityInit()
     {
+    }
+
+    /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        double d0 = this.getEntityBoundingBox().getAverageEdgeLength() * 4.0D;
+
+        if (Double.isNaN(d0))
+        {
+            d0 = 4.0D;
+        }
+
+        d0 = d0 * 64.0D;
+        return distance < d0 * d0;
     }
 
     public void handleHookCasting(double p_146035_1_, double p_146035_3_, double p_146035_5_, float p_146035_7_, float p_146035_8_)
@@ -109,6 +144,29 @@ public class EntityFishHook extends Entity
         this.prevRotationYaw = this.rotationYaw = (float)(MathHelper.func_181159_b(p_146035_1_, p_146035_5_) * 180.0D / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float)(MathHelper.func_181159_b(p_146035_3_, (double)f1) * 180.0D / Math.PI);
         this.ticksInGround = 0;
+    }
+
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
+    {
+        this.fishX = x;
+        this.fishY = y;
+        this.fishZ = z;
+        this.fishYaw = (double)yaw;
+        this.fishPitch = (double)pitch;
+        this.fishPosRotationIncrements = posRotationIncrements;
+        this.motionX = this.clientMotionX;
+        this.motionY = this.clientMotionY;
+        this.motionZ = this.clientMotionZ;
+    }
+
+    /**
+     * Sets the velocity to the args. Args: x, y, z
+     */
+    public void setVelocity(double x, double y, double z)
+    {
+        this.clientMotionX = this.motionX = x;
+        this.clientMotionY = this.motionY = y;
+        this.clientMotionZ = this.motionZ = z;
     }
 
     /**

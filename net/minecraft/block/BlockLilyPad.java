@@ -9,6 +9,7 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockLilyPad extends BlockBush
@@ -35,6 +36,21 @@ public class BlockLilyPad extends BlockBush
     public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
     {
         return new AxisAlignedBB((double)pos.getX() + this.minX, (double)pos.getY() + this.minY, (double)pos.getZ() + this.minZ, (double)pos.getX() + this.maxX, (double)pos.getY() + this.maxY, (double)pos.getZ() + this.maxZ);
+    }
+
+    public int getBlockColor()
+    {
+        return 7455580;
+    }
+
+    public int getRenderColor(IBlockState state)
+    {
+        return 7455580;
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return 2129968;
     }
 
     /**

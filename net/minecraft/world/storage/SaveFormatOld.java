@@ -1,7 +1,11 @@
 package net.minecraft.world.storage;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.List;
+import net.minecraft.client.AnvilConverterException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IProgressUpdate;
@@ -25,6 +29,32 @@ public class SaveFormatOld implements ISaveFormat
         }
 
         this.savesDirectory = p_i2147_1_;
+    }
+
+    /**
+     * Returns the name of the save format.
+     */
+    public String getName()
+    {
+        return "Old Format";
+    }
+
+    public List<SaveFormatComparator> getSaveList() throws AnvilConverterException
+    {
+        List<SaveFormatComparator> list = Lists.<SaveFormatComparator>newArrayList();
+
+        for (int i = 0; i < 5; ++i)
+        {
+            String s = "World" + (i + 1);
+            WorldInfo worldinfo = this.getWorldInfo(s);
+
+            if (worldinfo != null)
+            {
+                list.add(new SaveFormatComparator(s, "", worldinfo.getLastTimePlayed(), worldinfo.getSizeOnDisk(), worldinfo.getGameType(), false, worldinfo.isHardcoreModeEnabled(), worldinfo.areCommandsAllowed()));
+            }
+        }
+
+        return list;
     }
 
     public void flushCache()
@@ -77,6 +107,59 @@ public class SaveFormatOld implements ISaveFormat
             }
 
             return null;
+        }
+    }
+
+    /**
+     * Renames the world by storing the new name in level.dat. It does *not* rename the directory containing the world
+     * data.
+     */
+    public void renameWorld(String dirName, String newName)
+    {
+        File file1 = new File(this.savesDirectory, dirName);
+
+        if (file1.exists())
+        {
+            File file2 = new File(file1, "level.dat");
+
+            if (file2.exists())
+            {
+                try
+                {
+                    NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file2));
+                    NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+                    nbttagcompound1.setString("LevelName", newName);
+                    CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file2));
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public boolean func_154335_d(String p_154335_1_)
+    {
+        File file1 = new File(this.savesDirectory, p_154335_1_);
+
+        if (file1.exists())
+        {
+            return false;
+        }
+        else
+        {
+            try
+            {
+                file1.mkdir();
+                file1.delete();
+                return true;
+            }
+            catch (Throwable throwable)
+            {
+                logger.warn("Couldn\'t make new level", throwable);
+                return false;
+            }
         }
     }
 
@@ -159,6 +242,11 @@ public class SaveFormatOld implements ISaveFormat
         return new SaveHandler(this.savesDirectory, saveName, storePlayerdata);
     }
 
+    public boolean func_154334_a(String saveName)
+    {
+        return false;
+    }
+
     /**
      * gets if the map is old chunk saving (true) or McRegion (false)
      */
@@ -173,5 +261,14 @@ public class SaveFormatOld implements ISaveFormat
     public boolean convertMapFormat(String filename, IProgressUpdate progressCallback)
     {
         return false;
+    }
+
+    /**
+     * Return whether the given world can be loaded.
+     */
+    public boolean canLoadWorld(String p_90033_1_)
+    {
+        File file1 = new File(this.savesDirectory, p_90033_1_);
+        return file1.isDirectory();
     }
 }

@@ -18,6 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -207,6 +209,21 @@ public class BlockVine extends Block
 
             return true;
         }
+    }
+
+    public int getBlockColor()
+    {
+        return ColorizerFoliage.getFoliageColorBasic();
+    }
+
+    public int getRenderColor(IBlockState state)
+    {
+        return ColorizerFoliage.getFoliageColorBasic();
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return worldIn.getBiomeGenForCoords(pos).getFoliageColorAtPos(pos);
     }
 
     /**
@@ -405,6 +422,11 @@ public class BlockVine extends Block
         {
             super.harvestBlock(worldIn, player, pos, state, te);
         }
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     /**

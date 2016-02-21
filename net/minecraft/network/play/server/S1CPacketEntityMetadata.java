@@ -55,4 +55,14 @@ public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient>
     {
         handler.handleEntityMetadata(this);
     }
+
+    public List<DataWatcher.WatchableObject> func_149376_c()
+    {
+        return this.field_149378_b;
+    }
+
+    public int getEntityId()
+    {
+        return this.entityId;
+    }
 }

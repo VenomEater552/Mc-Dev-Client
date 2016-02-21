@@ -14,6 +14,8 @@ public interface IMerchant
 
     MerchantRecipeList getRecipes(EntityPlayer p_70934_1_);
 
+    void setRecipes(MerchantRecipeList recipeList);
+
     void useRecipe(MerchantRecipe recipe);
 
     /**

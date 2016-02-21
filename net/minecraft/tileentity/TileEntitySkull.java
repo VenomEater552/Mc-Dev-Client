@@ -135,6 +135,11 @@ public class TileEntitySkull extends TileEntity
         return this.skullType;
     }
 
+    public int getSkullRotation()
+    {
+        return this.skullRotation;
+    }
+
     public void setSkullRotation(int rotation)
     {
         this.skullRotation = rotation;

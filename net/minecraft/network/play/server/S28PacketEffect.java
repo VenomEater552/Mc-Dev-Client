@@ -58,4 +58,24 @@ public class S28PacketEffect implements Packet<INetHandlerPlayClient>
     {
         handler.handleEffect(this);
     }
+
+    public boolean isSoundServerwide()
+    {
+        return this.serverWide;
+    }
+
+    public int getSoundType()
+    {
+        return this.soundType;
+    }
+
+    public int getSoundData()
+    {
+        return this.soundData;
+    }
+
+    public BlockPos getSoundPos()
+    {
+        return this.soundPos;
+    }
 }

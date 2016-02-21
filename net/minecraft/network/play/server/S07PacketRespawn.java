@@ -61,4 +61,24 @@ public class S07PacketRespawn implements Packet<INetHandlerPlayClient>
         buf.writeByte(this.gameType.getID());
         buf.writeString(this.worldType.getWorldTypeName());
     }
+
+    public int getDimensionID()
+    {
+        return this.dimensionID;
+    }
+
+    public EnumDifficulty getDifficulty()
+    {
+        return this.difficulty;
+    }
+
+    public WorldSettings.GameType getGameType()
+    {
+        return this.gameType;
+    }
+
+    public WorldType getWorldType()
+    {
+        return this.worldType;
+    }
 }

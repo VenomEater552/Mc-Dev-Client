@@ -62,6 +62,11 @@ public class ContainerBrewingStand extends Container
         this.brewTime = this.tileBrewingStand.getField(0);
     }
 
+    public void updateProgressBar(int id, int data)
+    {
+        this.tileBrewingStand.setField(id, data);
+    }
+
     public boolean canInteractWith(EntityPlayer playerIn)
     {
         return this.tileBrewingStand.isUseableByPlayer(playerIn);

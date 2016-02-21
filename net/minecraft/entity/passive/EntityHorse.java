@@ -34,6 +34,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.DifficultyInstance;
@@ -693,9 +694,91 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
         return 400;
     }
 
+    public boolean func_110239_cn()
+    {
+        return this.getHorseType() == 0 || this.getHorseArmorIndexSynced() > 0;
+    }
+
     private void resetTexturePrefix()
     {
         this.texturePrefix = null;
+    }
+
+    public boolean func_175507_cI()
+    {
+        return this.field_175508_bO;
+    }
+
+    private void setHorseTexturePaths()
+    {
+        this.texturePrefix = "horse/";
+        this.horseTexturesArray[0] = null;
+        this.horseTexturesArray[1] = null;
+        this.horseTexturesArray[2] = null;
+        int i = this.getHorseType();
+        int j = this.getHorseVariant();
+
+        if (i == 0)
+        {
+            int k = j & 255;
+            int l = (j & 65280) >> 8;
+
+            if (k >= horseTextures.length)
+            {
+                this.field_175508_bO = false;
+                return;
+            }
+
+            this.horseTexturesArray[0] = horseTextures[k];
+            this.texturePrefix = this.texturePrefix + HORSE_TEXTURES_ABBR[k];
+
+            if (l >= horseMarkingTextures.length)
+            {
+                this.field_175508_bO = false;
+                return;
+            }
+
+            this.horseTexturesArray[1] = horseMarkingTextures[l];
+            this.texturePrefix = this.texturePrefix + HORSE_MARKING_TEXTURES_ABBR[l];
+        }
+        else
+        {
+            this.horseTexturesArray[0] = "";
+            this.texturePrefix = this.texturePrefix + "_" + i + "_";
+        }
+
+        int i1 = this.getHorseArmorIndexSynced();
+
+        if (i1 >= horseArmorTextures.length)
+        {
+            this.field_175508_bO = false;
+        }
+        else
+        {
+            this.horseTexturesArray[2] = horseArmorTextures[i1];
+            this.texturePrefix = this.texturePrefix + HORSE_ARMOR_TEXTURES_ABBR[i1];
+            this.field_175508_bO = true;
+        }
+    }
+
+    public String getHorseTexture()
+    {
+        if (this.texturePrefix == null)
+        {
+            this.setHorseTexturePaths();
+        }
+
+        return this.texturePrefix;
+    }
+
+    public String[] getVariantTexturePaths()
+    {
+        if (this.texturePrefix == null)
+        {
+            this.setHorseTexturePaths();
+        }
+
+        return this.horseTexturesArray;
     }
 
     public void openGUI(EntityPlayer playerEntity)
@@ -1597,6 +1680,21 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
         return livingdata;
     }
 
+    public float getGrassEatingAmount(float p_110258_1_)
+    {
+        return this.prevHeadLean + (this.headLean - this.prevHeadLean) * p_110258_1_;
+    }
+
+    public float getRearingAmount(float p_110223_1_)
+    {
+        return this.prevRearingAmount + (this.rearingAmount - this.prevRearingAmount) * p_110223_1_;
+    }
+
+    public float getMouthOpennessAngle(float p_110201_1_)
+    {
+        return this.prevMouthOpenness + (this.mouthOpenness - this.prevMouthOpenness) * p_110201_1_;
+    }
+
     public void setJumpPower(int jumpPowerIn)
     {
         if (this.isHorseSaddled())
@@ -1619,6 +1717,38 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
             {
                 this.jumpPower = 0.4F + 0.4F * (float)jumpPowerIn / 90.0F;
             }
+        }
+    }
+
+    /**
+     * "Spawns particles for the horse entity. par1 tells whether to spawn hearts. If it is false, it spawns smoke."
+     */
+    protected void spawnHorseParticles(boolean p_110216_1_)
+    {
+        EnumParticleTypes enumparticletypes = p_110216_1_ ? EnumParticleTypes.HEART : EnumParticleTypes.SMOKE_NORMAL;
+
+        for (int i = 0; i < 7; ++i)
+        {
+            double d0 = this.rand.nextGaussian() * 0.02D;
+            double d1 = this.rand.nextGaussian() * 0.02D;
+            double d2 = this.rand.nextGaussian() * 0.02D;
+            this.worldObj.spawnParticle(enumparticletypes, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + 0.5D + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, d0, d1, d2, new int[0]);
+        }
+    }
+
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 7)
+        {
+            this.spawnHorseParticles(true);
+        }
+        else if (id == 6)
+        {
+            this.spawnHorseParticles(false);
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
         }
     }
 

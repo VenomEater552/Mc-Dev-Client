@@ -49,4 +49,19 @@ public class S32PacketConfirmTransaction implements Packet<INetHandlerPlayClient
         buf.writeShort(this.actionNumber);
         buf.writeBoolean(this.field_148893_c);
     }
+
+    public int getWindowId()
+    {
+        return this.windowId;
+    }
+
+    public short getActionNumber()
+    {
+        return this.actionNumber;
+    }
+
+    public boolean func_148888_e()
+    {
+        return this.field_148893_c;
+    }
 }

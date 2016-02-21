@@ -80,6 +80,14 @@ public class ItemHoe extends Item
     }
 
     /**
+     * Returns True is the item is renderer in full 3D when hold.
+     */
+    public boolean isFull3D()
+    {
+        return true;
+    }
+
+    /**
      * Returns the name of the material this tool is made from as it is declared in EnumToolMaterial (meaning diamond
      * would return "EMERALD")
      */

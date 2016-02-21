@@ -131,6 +131,48 @@ public class S44PacketWorldBorder implements Packet<INetHandlerPlayClient>
         handler.handleWorldBorder(this);
     }
 
+    public void func_179788_a(WorldBorder border)
+    {
+        switch (this.action)
+        {
+            case SET_SIZE:
+                border.setTransition(this.targetSize);
+                break;
+
+            case LERP_SIZE:
+                border.setTransition(this.diameter, this.targetSize, this.timeUntilTarget);
+                break;
+
+            case SET_CENTER:
+                border.setCenter(this.centerX, this.centerZ);
+                break;
+
+            case SET_WARNING_BLOCKS:
+                border.setWarningDistance(this.warningDistance);
+                break;
+
+            case SET_WARNING_TIME:
+                border.setWarningTime(this.warningTime);
+                break;
+
+            case INITIALIZE:
+                border.setCenter(this.centerX, this.centerZ);
+
+                if (this.timeUntilTarget > 0L)
+                {
+                    border.setTransition(this.diameter, this.targetSize, this.timeUntilTarget);
+                }
+                else
+                {
+                    border.setTransition(this.targetSize);
+                }
+
+                border.setSize(this.size);
+                border.setWarningDistance(this.warningDistance);
+                border.setWarningTime(this.warningTime);
+        }
+    }
+
     public static enum Action
     {
         SET_SIZE,

@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespacedDefaultedByKey;
@@ -209,6 +210,14 @@ public class Block
     public int getLightOpacity()
     {
         return this.lightOpacity;
+    }
+
+    /**
+     * Used in the renderer to apply ambient occlusion
+     */
+    public boolean isTranslucent()
+    {
+        return this.translucent;
     }
 
     public int getLightValue()
@@ -437,12 +446,39 @@ public class Block
         this.maxZ = (double)maxZ;
     }
 
+    public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
+    {
+        Block block = worldIn.getBlockState(pos).getBlock();
+        int i = worldIn.getCombinedLight(pos, block.getLightValue());
+
+        if (i == 0 && block instanceof BlockSlab)
+        {
+            pos = pos.down();
+            block = worldIn.getBlockState(pos).getBlock();
+            return worldIn.getCombinedLight(pos, block.getLightValue());
+        }
+        else
+        {
+            return i;
+        }
+    }
+
+    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    {
+        return side == EnumFacing.DOWN && this.minY > 0.0D ? true : (side == EnumFacing.UP && this.maxY < 1.0D ? true : (side == EnumFacing.NORTH && this.minZ > 0.0D ? true : (side == EnumFacing.SOUTH && this.maxZ < 1.0D ? true : (side == EnumFacing.WEST && this.minX > 0.0D ? true : (side == EnumFacing.EAST && this.maxX < 1.0D ? true : !worldIn.getBlockState(pos).getBlock().isOpaqueCube())))));
+    }
+
     /**
      * Whether this Block is solid on the given Side
      */
     public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
     {
         return worldIn.getBlockState(pos).getBlock().getMaterial().isSolid();
+    }
+
+    public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos)
+    {
+        return new AxisAlignedBB((double)pos.getX() + this.minX, (double)pos.getY() + this.minY, (double)pos.getZ() + this.minZ, (double)pos.getX() + this.maxX, (double)pos.getY() + this.maxY, (double)pos.getZ() + this.maxZ);
     }
 
     /**
@@ -493,6 +529,10 @@ public class Block
     }
 
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+    }
+
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
     }
 
@@ -783,6 +823,11 @@ public class Block
     {
     }
 
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.SOLID;
+    }
+
     public boolean canReplace(World worldIn, BlockPos pos, EnumFacing side, ItemStack stack)
     {
         return this.canPlaceBlockOnSide(worldIn, pos, side);
@@ -881,6 +926,26 @@ public class Block
     public final double getBlockBoundsMaxZ()
     {
         return this.maxZ;
+    }
+
+    public int getBlockColor()
+    {
+        return 16777215;
+    }
+
+    public int getRenderColor(IBlockState state)
+    {
+        return 16777215;
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return 16777215;
+    }
+
+    public final int colorMultiplier(IBlockAccess worldIn, BlockPos pos)
+    {
+        return this.colorMultiplier(worldIn, pos, 0);
     }
 
     public int getWeakPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side)
@@ -1024,6 +1089,14 @@ public class Block
     }
 
     /**
+     * Returns the default ambient occlusion value based on block opacity
+     */
+    public float getAmbientOcclusionLightValue()
+    {
+        return this.isBlockNormalCube() ? 0.2F : 1.0F;
+    }
+
+    /**
      * Block's chance to react to a living entity falling on it.
      */
     public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance)
@@ -1040,9 +1113,30 @@ public class Block
         entityIn.motionY = 0.0D;
     }
 
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        return Item.getItemFromBlock(this);
+    }
+
     public int getDamageValue(World worldIn, BlockPos pos)
     {
         return this.damageDropped(worldIn.getBlockState(pos));
+    }
+
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    {
+        list.add(new ItemStack(itemIn, 1, 0));
+    }
+
+    /**
+     * Returns the CreativeTab to display the given block on.
+     */
+    public CreativeTabs getCreativeTabToDisplayOn()
+    {
+        return this.displayOnCreativeTab;
     }
 
     public Block setCreativeTab(CreativeTabs tab)
@@ -1060,6 +1154,14 @@ public class Block
      */
     public void fillWithRain(World worldIn, BlockPos pos)
     {
+    }
+
+    /**
+     * Returns true only if block is flowerPot
+     */
+    public boolean isFlowerPot()
+    {
+        return false;
     }
 
     public boolean requiresUpdates()
@@ -1095,6 +1197,14 @@ public class Block
         return 0;
     }
 
+    /**
+     * Possibly modify the given BlockState before rendering it on an Entity (Minecarts, Endermen, ...)
+     */
+    public IBlockState getStateForEntityRender(IBlockState state)
+    {
+        return state;
+    }
+
     protected BlockState createBlockState()
     {
         return new BlockState(this, new IProperty[0]);
@@ -1113,6 +1223,14 @@ public class Block
     public final IBlockState getDefaultState()
     {
         return this.defaultBlockState;
+    }
+
+    /**
+     * Get the OffsetType for this Block. Determines if the model is rendered slightly offset.
+     */
+    public Block.EnumOffsetType getOffsetType()
+    {
+        return Block.EnumOffsetType.NONE;
     }
 
     public String toString()
@@ -1377,6 +1495,13 @@ public class Block
     private static void registerBlock(int id, String textualID, Block block_)
     {
         registerBlock(id, new ResourceLocation(textualID), block_);
+    }
+
+    public static enum EnumOffsetType
+    {
+        NONE,
+        XZ,
+        XYZ;
     }
 
     public static class SoundType

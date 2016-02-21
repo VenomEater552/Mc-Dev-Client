@@ -5,6 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 
 public class BlockSlime extends BlockBreakable
@@ -14,6 +15,11 @@ public class BlockSlime extends BlockBreakable
         super(Material.clay, false, MapColor.grassColor);
         this.setCreativeTab(CreativeTabs.tabDecorations);
         this.slipperiness = 0.8F;
+    }
+
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.TRANSLUCENT;
     }
 
     /**

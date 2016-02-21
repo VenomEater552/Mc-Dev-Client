@@ -655,6 +655,21 @@ public class EntityZombie extends EntityMob
         this.worldObj.setEntityState(this, (byte)16);
     }
 
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 16)
+        {
+            if (!this.isSilent())
+            {
+                this.worldObj.playSound(this.posX + 0.5D, this.posY + 0.5D, this.posZ + 0.5D, "mob.zombie.remedy", 1.0F + this.rand.nextFloat(), this.rand.nextFloat() * 0.7F + 0.3F, false);
+            }
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * Determines if an entity can be despawned, used on idle far away entities
      */

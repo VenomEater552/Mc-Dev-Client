@@ -14,6 +14,19 @@ public class C15PacketClientSettings implements Packet<INetHandlerPlayServer>
     private boolean enableColors;
     private int modelPartFlags;
 
+    public C15PacketClientSettings()
+    {
+    }
+
+    public C15PacketClientSettings(String langIn, int viewIn, EntityPlayer.EnumChatVisibility chatVisibilityIn, boolean enableColorsIn, int modelPartFlagsIn)
+    {
+        this.lang = langIn;
+        this.view = viewIn;
+        this.chatVisibility = chatVisibilityIn;
+        this.enableColors = enableColorsIn;
+        this.modelPartFlags = modelPartFlagsIn;
+    }
+
     /**
      * Reads the raw packet data from the data stream.
      */

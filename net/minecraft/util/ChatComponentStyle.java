@@ -81,6 +81,23 @@ public abstract class ChatComponentStyle implements IChatComponent
         return stringbuilder.toString();
     }
 
+    /**
+     * Gets the text of this component, with formatting codes added for rendering.
+     */
+    public final String getFormattedText()
+    {
+        StringBuilder stringbuilder = new StringBuilder();
+
+        for (IChatComponent ichatcomponent : this)
+        {
+            stringbuilder.append(ichatcomponent.getChatStyle().getFormattingCode());
+            stringbuilder.append(ichatcomponent.getUnformattedTextForChat());
+            stringbuilder.append((Object)EnumChatFormatting.RESET);
+        }
+
+        return stringbuilder.toString();
+    }
+
     public static Iterator<IChatComponent> createDeepCopyIterator(Iterable<IChatComponent> components)
     {
         Iterator<IChatComponent> iterator = Iterators.concat(Iterators.transform(components.iterator(), new Function<IChatComponent, Iterator<IChatComponent>>()

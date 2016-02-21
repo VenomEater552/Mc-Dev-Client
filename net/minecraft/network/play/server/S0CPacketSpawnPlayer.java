@@ -82,4 +82,54 @@ public class S0CPacketSpawnPlayer implements Packet<INetHandlerPlayClient>
     {
         handler.handleSpawnPlayer(this);
     }
+
+    public List<DataWatcher.WatchableObject> func_148944_c()
+    {
+        if (this.field_148958_j == null)
+        {
+            this.field_148958_j = this.watcher.getAllWatched();
+        }
+
+        return this.field_148958_j;
+    }
+
+    public int getEntityID()
+    {
+        return this.entityId;
+    }
+
+    public UUID getPlayer()
+    {
+        return this.playerId;
+    }
+
+    public int getX()
+    {
+        return this.x;
+    }
+
+    public int getY()
+    {
+        return this.y;
+    }
+
+    public int getZ()
+    {
+        return this.z;
+    }
+
+    public byte getYaw()
+    {
+        return this.yaw;
+    }
+
+    public byte getPitch()
+    {
+        return this.pitch;
+    }
+
+    public int getCurrentItemID()
+    {
+        return this.currentItem;
+    }
 }

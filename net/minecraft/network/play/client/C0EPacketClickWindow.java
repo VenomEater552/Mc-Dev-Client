@@ -26,6 +26,20 @@ public class C0EPacketClickWindow implements Packet<INetHandlerPlayServer>
     /** Inventory operation mode */
     private int mode;
 
+    public C0EPacketClickWindow()
+    {
+    }
+
+    public C0EPacketClickWindow(int windowId, int slotId, int usedButton, int mode, ItemStack clickedItem, short actionNumber)
+    {
+        this.windowId = windowId;
+        this.slotId = slotId;
+        this.usedButton = usedButton;
+        this.clickedItem = clickedItem != null ? clickedItem.copy() : null;
+        this.actionNumber = actionNumber;
+        this.mode = mode;
+    }
+
     /**
      * Passes this Packet on to the NetHandler for processing.
      */

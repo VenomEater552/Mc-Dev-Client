@@ -240,6 +240,11 @@ public class WorldBorder
         }
     }
 
+    public double getResizeSpeed()
+    {
+        return this.endTime == this.startTime ? 0.0D : Math.abs(this.startDiameter - this.endDiameter) / (double)(this.endTime - this.startTime);
+    }
+
     public int getWarningTime()
     {
         return this.warningTime;

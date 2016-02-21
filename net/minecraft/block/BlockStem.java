@@ -114,6 +114,27 @@ public class BlockStem extends BlockBush implements IGrowable
         worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(Math.min(7, i))), 2);
     }
 
+    public int getRenderColor(IBlockState state)
+    {
+        if (state.getBlock() != this)
+        {
+            return super.getRenderColor(state);
+        }
+        else
+        {
+            int i = ((Integer)state.getValue(AGE)).intValue();
+            int j = i * 32;
+            int k = 255 - i * 8;
+            int l = i * 4;
+            return j << 16 | k << 8 | l;
+        }
+    }
+
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return this.getRenderColor(worldIn.getBlockState(pos));
+    }
+
     /**
      * Sets the block's bounds for rendering it as an item
      */
@@ -167,6 +188,12 @@ public class BlockStem extends BlockBush implements IGrowable
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return null;
+    }
+
+    public Item getItem(World worldIn, BlockPos pos)
+    {
+        Item item = this.getSeedItem();
+        return item != null ? item : null;
     }
 
     /**

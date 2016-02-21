@@ -56,4 +56,24 @@ public class S10PacketSpawnPainting implements Packet<INetHandlerPlayClient>
     {
         handler.handleSpawnPainting(this);
     }
+
+    public int getEntityID()
+    {
+        return this.entityID;
+    }
+
+    public BlockPos getPosition()
+    {
+        return this.position;
+    }
+
+    public EnumFacing getFacing()
+    {
+        return this.facing;
+    }
+
+    public String getTitle()
+    {
+        return this.title;
+    }
 }

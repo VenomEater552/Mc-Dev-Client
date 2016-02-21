@@ -48,4 +48,9 @@ public class S02PacketLoginSuccess implements Packet<INetHandlerLoginClient>
     {
         handler.handleLoginSuccess(this);
     }
+
+    public GameProfile getProfile()
+    {
+        return this.profile;
+    }
 }

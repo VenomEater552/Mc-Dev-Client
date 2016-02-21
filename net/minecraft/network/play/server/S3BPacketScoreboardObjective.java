@@ -63,4 +63,24 @@ public class S3BPacketScoreboardObjective implements Packet<INetHandlerPlayClien
     {
         handler.handleScoreboardObjective(this);
     }
+
+    public String func_149339_c()
+    {
+        return this.objectiveName;
+    }
+
+    public String func_149337_d()
+    {
+        return this.objectiveValue;
+    }
+
+    public int func_149338_e()
+    {
+        return this.field_149342_c;
+    }
+
+    public IScoreObjectiveCriteria.EnumRenderType func_179817_d()
+    {
+        return this.type;
+    }
 }

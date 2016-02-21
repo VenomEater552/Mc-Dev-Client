@@ -1,9 +1,11 @@
 package net.minecraft.network.play.server;
 
 import java.io.IOException;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.world.World;
 
 public class S14PacketEntity implements Packet<INetHandlerPlayClient>
 {
@@ -52,6 +54,46 @@ public class S14PacketEntity implements Packet<INetHandlerPlayClient>
     public String toString()
     {
         return "Entity_" + super.toString();
+    }
+
+    public Entity getEntity(World worldIn)
+    {
+        return worldIn.getEntityByID(this.entityId);
+    }
+
+    public byte func_149062_c()
+    {
+        return this.posX;
+    }
+
+    public byte func_149061_d()
+    {
+        return this.posY;
+    }
+
+    public byte func_149064_e()
+    {
+        return this.posZ;
+    }
+
+    public byte func_149066_f()
+    {
+        return this.yaw;
+    }
+
+    public byte func_149063_g()
+    {
+        return this.pitch;
+    }
+
+    public boolean func_149060_h()
+    {
+        return this.field_149069_g;
+    }
+
+    public boolean getOnGround()
+    {
+        return this.onGround;
     }
 
     public static class S15PacketEntityRelMove extends S14PacketEntity

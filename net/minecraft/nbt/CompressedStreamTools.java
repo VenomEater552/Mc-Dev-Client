@@ -6,6 +6,9 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +54,70 @@ public class CompressedStreamTools
         finally
         {
             dataoutputstream.close();
+        }
+    }
+
+    public static void safeWrite(NBTTagCompound p_74793_0_, File p_74793_1_) throws IOException
+    {
+        File file1 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
+
+        if (file1.exists())
+        {
+            file1.delete();
+        }
+
+        write(p_74793_0_, file1);
+
+        if (p_74793_1_.exists())
+        {
+            p_74793_1_.delete();
+        }
+
+        if (p_74793_1_.exists())
+        {
+            throw new IOException("Failed to delete " + p_74793_1_);
+        }
+        else
+        {
+            file1.renameTo(p_74793_1_);
+        }
+    }
+
+    public static void write(NBTTagCompound p_74795_0_, File p_74795_1_) throws IOException
+    {
+        DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
+
+        try
+        {
+            write(p_74795_0_, dataoutputstream);
+        }
+        finally
+        {
+            dataoutputstream.close();
+        }
+    }
+
+    public static NBTTagCompound read(File p_74797_0_) throws IOException
+    {
+        if (!p_74797_0_.exists())
+        {
+            return null;
+        }
+        else
+        {
+            DataInputStream datainputstream = new DataInputStream(new FileInputStream(p_74797_0_));
+            NBTTagCompound nbttagcompound;
+
+            try
+            {
+                nbttagcompound = read(datainputstream, NBTSizeTracker.INFINITE);
+            }
+            finally
+            {
+                datainputstream.close();
+            }
+
+            return nbttagcompound;
         }
     }
 

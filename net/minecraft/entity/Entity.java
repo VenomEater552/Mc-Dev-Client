@@ -39,6 +39,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
@@ -205,6 +206,9 @@ public abstract class Entity implements ICommandSender
     public int chunkCoordX;
     public int chunkCoordY;
     public int chunkCoordZ;
+    public int serverPosX;
+    public int serverPosY;
+    public int serverPosZ;
 
     /**
      * Render entity even if it is outside the camera frustum. Only true in EntityFish for now. Used in RenderGlobal:
@@ -295,6 +299,31 @@ public abstract class Entity implements ICommandSender
     }
 
     /**
+     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
+     * (only actually used on players though its also on Entity)
+     */
+    protected void preparePlayerToSpawn()
+    {
+        if (this.worldObj != null)
+        {
+            while (this.posY > 0.0D && this.posY < 256.0D)
+            {
+                this.setPosition(this.posX, this.posY, this.posZ);
+
+                if (this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty())
+                {
+                    break;
+                }
+
+                ++this.posY;
+            }
+
+            this.motionX = this.motionY = this.motionZ = 0.0D;
+            this.rotationPitch = 0.0F;
+        }
+    }
+
+    /**
      * Will get destroyed next tick.
      */
     public void setDead()
@@ -341,6 +370,21 @@ public abstract class Entity implements ICommandSender
         float f = this.width / 2.0F;
         float f1 = this.height;
         this.setEntityBoundingBox(new AxisAlignedBB(x - (double)f, y, z - (double)f, x + (double)f, y + (double)f1, z + (double)f));
+    }
+
+    /**
+     * Adds 15% to the entity's yaw and subtracts 15% from the pitch. Clamps pitch from -90 to 90. Both arguments in
+     * degrees.
+     */
+    public void setAngles(float yaw, float pitch)
+    {
+        float f = this.rotationPitch;
+        float f1 = this.rotationYaw;
+        this.rotationYaw = (float)((double)this.rotationYaw + (double)yaw * 0.15D);
+        this.rotationPitch = (float)((double)this.rotationPitch - (double)pitch * 0.15D);
+        this.rotationPitch = MathHelper.clamp_float(this.rotationPitch, -90.0F, 90.0F);
+        this.prevRotationPitch += this.rotationPitch - f;
+        this.prevRotationYaw += this.rotationYaw - f1;
     }
 
     /**
@@ -1190,6 +1234,12 @@ public abstract class Entity implements ICommandSender
         }
     }
 
+    public int getBrightnessForRender(float partialTicks)
+    {
+        BlockPos blockpos = new BlockPos(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ);
+        return this.worldObj.isBlockLoaded(blockpos) ? this.worldObj.getCombinedLight(blockpos, 0) : 0;
+    }
+
     /**
      * Gets how bright this entity is.
      */
@@ -1422,6 +1472,29 @@ public abstract class Entity implements ICommandSender
         return new Vec3((double)(f1 * f2), (double)f3, (double)(f * f2));
     }
 
+    public Vec3 getPositionEyes(float partialTicks)
+    {
+        if (partialTicks == 1.0F)
+        {
+            return new Vec3(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ);
+        }
+        else
+        {
+            double d0 = this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks;
+            double d1 = this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks + (double)this.getEyeHeight();
+            double d2 = this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks;
+            return new Vec3(d0, d1, d2);
+        }
+    }
+
+    public MovingObjectPosition rayTrace(double blockReachDistance, float partialTicks)
+    {
+        Vec3 vec3 = this.getPositionEyes(partialTicks);
+        Vec3 vec31 = this.getLook(partialTicks);
+        Vec3 vec32 = vec3.addVector(vec31.xCoord * blockReachDistance, vec31.yCoord * blockReachDistance, vec31.zCoord * blockReachDistance);
+        return this.worldObj.rayTraceBlocks(vec3, vec32, false, false, true);
+    }
+
     /**
      * Returns true if other Entities should be prevented from moving through this Entity.
      */
@@ -1444,6 +1517,32 @@ public abstract class Entity implements ICommandSender
      */
     public void addToPlayerScore(Entity entityIn, int amount)
     {
+    }
+
+    public boolean isInRangeToRender3d(double x, double y, double z)
+    {
+        double d0 = this.posX - x;
+        double d1 = this.posY - y;
+        double d2 = this.posZ - z;
+        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+        return this.isInRangeToRenderDist(d3);
+    }
+
+    /**
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
+     * length * 64 * renderDistanceWeight Args: distance
+     */
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        double d0 = this.getEntityBoundingBox().getAverageEdgeLength();
+
+        if (Double.isNaN(d0))
+        {
+            d0 = 1.0D;
+        }
+
+        d0 = d0 * 64.0D * this.renderDistanceWeight;
+        return distance < d0 * d0;
     }
 
     /**
@@ -1901,6 +2000,29 @@ public abstract class Entity implements ICommandSender
         }
     }
 
+    public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean p_180426_10_)
+    {
+        this.setPosition(x, y, z);
+        this.setRotation(yaw, pitch);
+        List<AxisAlignedBB> list = this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox().contract(0.03125D, 0.0D, 0.03125D));
+
+        if (!list.isEmpty())
+        {
+            double d0 = 0.0D;
+
+            for (AxisAlignedBB axisalignedbb : list)
+            {
+                if (axisalignedbb.maxY > d0)
+                {
+                    d0 = axisalignedbb.maxY;
+                }
+            }
+
+            y = y + (d0 - this.getEntityBoundingBox().minY);
+            this.setPosition(x, y, z);
+        }
+    }
+
     public float getCollisionBorderSize()
     {
         return 0.1F;
@@ -1944,6 +2066,27 @@ public abstract class Entity implements ICommandSender
     public int getPortalCooldown()
     {
         return 300;
+    }
+
+    /**
+     * Sets the velocity to the args. Args: x, y, z
+     */
+    public void setVelocity(double x, double y, double z)
+    {
+        this.motionX = x;
+        this.motionY = y;
+        this.motionZ = z;
+    }
+
+    public void handleStatusUpdate(byte id)
+    {
+    }
+
+    /**
+     * Setups the entity to do the hurt animation. Only used by packets in multiplayer.
+     */
+    public void performHurtAnimation()
+    {
     }
 
     /**
@@ -2016,9 +2159,24 @@ public abstract class Entity implements ICommandSender
         return this.getFlag(5);
     }
 
+    /**
+     * Only used by renderer in EntityLivingBase subclasses.
+     * Determines if an entity is visible or not to a specfic player, if the entity is normally invisible.
+     * For EntityLivingBase subclasses, returning false when invisible will render the entity semitransparent.
+     */
+    public boolean isInvisibleToPlayer(EntityPlayer player)
+    {
+        return player.isSpectator() ? false : this.isInvisible();
+    }
+
     public void setInvisible(boolean invisible)
     {
         this.setFlag(5, invisible);
+    }
+
+    public boolean isEating()
+    {
+        return this.getFlag(4);
     }
 
     public void setEating(boolean eating)
@@ -2395,6 +2553,14 @@ public abstract class Entity implements ICommandSender
         });
     }
 
+    /**
+     * Return whether this entity should be rendered as on fire.
+     */
+    public boolean canRenderOnFire()
+    {
+        return this.isBurning();
+    }
+
     public UUID getUniqueID()
     {
         return this.entityUniqueID;
@@ -2453,6 +2619,11 @@ public abstract class Entity implements ICommandSender
     public void setPositionAndUpdate(double x, double y, double z)
     {
         this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
+    }
+
+    public boolean getAlwaysRenderNameTagForRender()
+    {
+        return this.getAlwaysRenderNameTag();
     }
 
     public void onDataWatcherUpdate(int dataID)
@@ -2590,6 +2761,13 @@ public abstract class Entity implements ICommandSender
     public NBTTagCompound getNBTTagCompound()
     {
         return null;
+    }
+
+    /**
+     * Called when client receives entity's NBTTagCompound from server.
+     */
+    public void clientUpdateEntityNBT(NBTTagCompound compound)
+    {
     }
 
     /**

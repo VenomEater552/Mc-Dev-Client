@@ -41,4 +41,9 @@ public class S09PacketHeldItemChange implements Packet<INetHandlerPlayClient>
     {
         handler.handleHeldItemChange(this);
     }
+
+    public int getHeldItemHotbarIndex()
+    {
+        return this.heldItemHotbarIndex;
+    }
 }

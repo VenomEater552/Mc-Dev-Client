@@ -64,6 +64,36 @@ public class S08PacketPlayerPosLook implements Packet<INetHandlerPlayClient>
         handler.handlePlayerPosLook(this);
     }
 
+    public double getX()
+    {
+        return this.x;
+    }
+
+    public double getY()
+    {
+        return this.y;
+    }
+
+    public double getZ()
+    {
+        return this.z;
+    }
+
+    public float getYaw()
+    {
+        return this.yaw;
+    }
+
+    public float getPitch()
+    {
+        return this.pitch;
+    }
+
+    public Set<S08PacketPlayerPosLook.EnumFlags> func_179834_f()
+    {
+        return this.field_179835_f;
+    }
+
     public static enum EnumFlags
     {
         X(0),

@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.world.World;
 
 public class S43PacketCamera implements Packet<INetHandlerPlayClient>
 {
@@ -41,5 +42,10 @@ public class S43PacketCamera implements Packet<INetHandlerPlayClient>
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleCamera(this);
+    }
+
+    public Entity getEntity(World worldIn)
+    {
+        return worldIn.getEntityByID(this.entityId);
     }
 }

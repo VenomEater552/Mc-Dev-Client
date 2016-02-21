@@ -40,6 +40,11 @@ public class ContainerBeacon extends Container
         listener.func_175173_a(this, this.tileBeacon);
     }
 
+    public void updateProgressBar(int id, int data)
+    {
+        this.tileBeacon.setField(id, data);
+    }
+
     public IInventory func_180611_e()
     {
         return this.tileBeacon;

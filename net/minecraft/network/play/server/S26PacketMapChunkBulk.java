@@ -90,4 +90,29 @@ public class S26PacketMapChunkBulk implements Packet<INetHandlerPlayClient>
     {
         handler.handleMapChunkBulk(this);
     }
+
+    public int getChunkX(int p_149255_1_)
+    {
+        return this.xPositions[p_149255_1_];
+    }
+
+    public int getChunkZ(int p_149253_1_)
+    {
+        return this.zPositions[p_149253_1_];
+    }
+
+    public int getChunkCount()
+    {
+        return this.xPositions.length;
+    }
+
+    public byte[] getChunkBytes(int p_149256_1_)
+    {
+        return this.chunksData[p_149256_1_].data;
+    }
+
+    public int getChunkSize(int p_179754_1_)
+    {
+        return this.chunksData[p_179754_1_].dataSize;
+    }
 }
